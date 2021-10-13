@@ -1,8 +1,8 @@
 package impl
 
 import (
-	"gochat/app/domain"
 	"gochat/app/repository"
+	"gochat/app/serializers"
 	"gochat/app/svc"
 	"gochat/infra/errors"
 )
@@ -17,18 +17,19 @@ func NewUsersService(urepo repository.IUsers) svc.IUsers {
 	}
 }
 
-func (u *users) CreateAdminUser(user domain.User) (*domain.User, *errors.RestErr) {
-	resp, saveErr := u.urepo.Save(&user)
-	if saveErr != nil {
-		return nil, saveErr
+func (u *users) CreateUser(usr serializers.UserReq) (map[string]interface{}, *errors.RestErr) {
+	user := map[string]interface{}{
+		"Email":       usr.Email,
+		"Phone":       usr.Phone,
+		"Password":    usr.Password,
+		"DisplayName": usr.DisplayName,
+		"ProfilePic":  usr.ProfilePic,
 	}
-	return resp, nil
-}
 
-func (u *users) CreateUser(user domain.User) (*domain.User, *errors.RestErr) {
-	resp, saveErr := u.urepo.Save(&user)
+	resp, saveErr := u.urepo.Save(user)
 	if saveErr != nil {
 		return nil, saveErr
 	}
+
 	return resp, nil
 }

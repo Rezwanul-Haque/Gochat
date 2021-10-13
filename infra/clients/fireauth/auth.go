@@ -12,11 +12,18 @@ import (
 	"google.golang.org/api/option"
 )
 
-var authc *auth.Client
+type fireauthClient struct {
+	authc *auth.Client
+}
+
+var (
+	myAuthClient fireauthClient
+	ctx          context.Context
+)
 
 func Init() {
 	var err error
-	ctx := context.Background()
+	ctx = context.Background()
 
 	absPath, err := filepath.Abs(config.Firebase().CredentialFilePath)
 	if err != nil {
@@ -37,9 +44,32 @@ func Init() {
 		panic(fmt.Sprintf("firebase auth load error: %+v", err))
 	}
 
-	authc = auth
+	myAuthClient = fireauthClient{
+		authc: auth,
+	}
 }
 
-func FireAuth() *auth.Client {
-	return authc
+func FireAuth() fireauthClient {
+	return myAuthClient
+}
+
+func (fc fireauthClient) Login() {
+	fmt.Println("login")
+}
+
+func (fc fireauthClient) Signup(payload map[string]interface{}) (*auth.UserRecord, error) {
+	params := (&auth.UserToCreate{}).
+		Email(payload["Email"].(string)).
+		PhoneNumber(payload["Phone"].(string)).
+		Password(payload["Password"].(string)).
+		DisplayName(payload["DisplayName"].(string)).
+		PhotoURL(payload["ProfilePic"].(string))
+
+	u, err := fc.authc.CreateUser(ctx, params)
+	if err != nil {
+		logger.Error("error creating user: %v", err)
+		return nil, err
+	}
+	logger.InfoAsJson("Successfully created user", u)
+	return u, nil
 }

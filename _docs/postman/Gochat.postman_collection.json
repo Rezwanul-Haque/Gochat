@@ -1,0 +1,43 @@
+{
+	"info": {
+		"_postman_id": "46201dc4-8a1b-44e8-b650-3014968f5125",
+		"name": "Gochat",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"rezwanul.cse@gmail.com\",\n    \"phone\": \"+8801819990422\",\n    \"password\": \"secret\",\n    \"display_name\": \"rezwanul-haque\",\n    \"profile_pic\": \"https://drive.google.com/file/d/1WZ3FJtV0cbr5weqVM9NDBEvRT6M22i3V/view?usp=sharing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{url}}/v1/users/signup",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

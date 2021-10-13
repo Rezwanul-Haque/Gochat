@@ -1,11 +1,10 @@
 package svc
 
 import (
-	"gochat/app/domain"
+	"gochat/app/serializers"
 	"gochat/infra/errors"
 )
 
 type IUsers interface {
-	CreateAdminUser(domain.User) (*domain.User, *errors.RestErr)
-	CreateUser(domain.User) (*domain.User, *errors.RestErr)
+	CreateUser(serializers.UserReq) (map[string]interface{}, *errors.RestErr)
 }

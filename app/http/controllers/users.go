@@ -1,10 +1,16 @@
 package controllers
 
 import (
+	"gochat/app/serializers"
 	"gochat/app/svc"
+	"gochat/app/utils/methodsutil"
+	"gochat/app/utils/msgutil"
+	"gochat/infra/errors"
+	"gochat/infra/logger"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type users struct {
@@ -19,37 +25,30 @@ func NewUsersController(grp interface{}, uSvc svc.IUsers) {
 
 	g := grp.(*echo.Group)
 
-	g.POST("/v1/user/signup", uc.Create)
+	g.POST("/v1/users/signup", uc.Create)
 }
 
 func (ctr *users) Create(c echo.Context) error {
-	// foundUser, getErr := GetUserByAppKey(c, ctr.uSvc)
-	// if getErr != nil {
-	// 	return c.JSON(getErr.Status, getErr)
-	// }
+	var user serializers.UserReq
 
-	// var user domain.User
+	if err := c.Bind(&user); err != nil {
+		restErr := errors.NewBadRequestError("invalid json body")
+		return c.JSON(restErr.Status, restErr)
+	}
 
-	// if err := c.Bind(&user); err != nil {
-	// 	restErr := errors.NewBadRequestError("invalid json body")
-	// 	return c.JSON(restErr.Status, restErr)
-	// }
+	hashedPass, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
+	user.Password = string(hashedPass)
 
-	// hashedPass, _ := bcrypt.GenerateFromPassword([]byte(*user.Password), 8)
-	// *user.Password = string(hashedPass)
-	// user.CompanyID = foundUser.CompanyID
-	// user.RoleID = consts.RoleIDSales
+	result, saveErr := ctr.uSvc.CreateUser(user)
+	if saveErr != nil {
+		return c.JSON(saveErr.Status, saveErr)
+	}
+	var resp serializers.UserResp
+	if err := methodsutil.StructToStruct(result, &resp); err != nil {
+		logger.Error(msgutil.EntityBindToStructFailedMsg("controller layer: user create"), err)
+		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
+		return c.JSON(http.StatusInternalServerError, restErr)
+	}
 
-	// result, saveErr := ctr.uSvc.CreateUser(user)
-	// if saveErr != nil {
-	// 	return c.JSON(saveErr.Status, saveErr)
-	// }
-	// var resp serializers.UserResp
-	// respErr := methodsutil.StructToStruct(result, &resp)
-	// if respErr != nil {
-	// 	return respErr
-	// }
-
-	// return c.JSON(http.StatusCreated, resp)
-	return c.JSON(http.StatusCreated, "user created")
+	return c.JSON(http.StatusCreated, resp)
 }

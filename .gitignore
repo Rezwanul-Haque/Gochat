@@ -1,0 +1,33 @@
+# IDE / Editor ignore
+.idea/
+.vscode/
+__debug_bin
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Misc
+.DS_Store
+
+# binary
+gochat
+bin
+
+# persistent folder
+.db_data
+
+# library
+vendor
+
+# sensitive credential files
+fb-svc-key.json

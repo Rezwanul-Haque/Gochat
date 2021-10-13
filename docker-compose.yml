@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  consul:
+    image: consul:latest
+    container_name: consul_dev
+    restart: always
+    ports:
+      - 8500:8500
+    networks:
+      - gochat_networks
+
+  gochat:
+    container_name: gochat
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    command: serve
+    volumes:
+      - ./:/project
+    environment:
+      - CONSUL_URL=consul_dev:8500
+      - CONSUL_PATH=gochat
+    tty: true
+    depends_on:
+      - consul
+    networks:
+      - gochat_networks
+    restart: on-failure:3
+
+networks:
+  gochat_networks:
+    name: gochat_networks
+    driver: bridge

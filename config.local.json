@@ -1,0 +1,6 @@
+{
+  "app": {
+    "name": "gochat",
+    "port": 8080
+  }
+}

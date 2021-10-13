@@ -16,7 +16,7 @@ type AppConfig struct {
 }
 
 type FireBaseConfig struct {
-	CredentialPath string
+	CredentialFilePath string
 }
 
 type Config struct {
@@ -30,7 +30,7 @@ func App() *AppConfig {
 	return config.App
 }
 
-func Cloud() *FireBaseConfig {
+func Firebase() *FireBaseConfig {
 	return config.FBConfig
 }
 
@@ -74,6 +74,6 @@ func setDefaultConfig() {
 	}
 
 	config.FBConfig = &FireBaseConfig{
-		CredentialPath: "",
+		CredentialFilePath: "fb-svc-key.json",
 	}
 }

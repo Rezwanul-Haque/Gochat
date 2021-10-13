@@ -2,5 +2,8 @@
   "app": {
     "name": "gochat",
     "port": 8080
+  },
+  "fbConfig": {
+    "credentialPath": "../../fb-svc-key.json"
   }
 }

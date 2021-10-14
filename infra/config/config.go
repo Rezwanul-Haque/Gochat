@@ -21,7 +21,7 @@ type FireBaseConfig struct {
 
 type Config struct {
 	App      *AppConfig
-	FBConfig *FireBaseConfig
+	FireBase *FireBaseConfig
 }
 
 var config Config
@@ -31,7 +31,7 @@ func App() *AppConfig {
 }
 
 func Firebase() *FireBaseConfig {
-	return config.FBConfig
+	return config.FireBase
 }
 
 func LoadConfig() {
@@ -73,7 +73,7 @@ func setDefaultConfig() {
 		Port: "8080",
 	}
 
-	config.FBConfig = &FireBaseConfig{
+	config.FireBase = &FireBaseConfig{
 		CredentialFilePath: "fb-svc-key.json",
 	}
 }

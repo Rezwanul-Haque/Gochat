@@ -3,7 +3,7 @@
     "name": "gochat",
     "port": 8080
   },
-  "fbConfig": {
-    "credentialPath": "../../fb-svc-key.json"
+  "fireBase": {
+    "credentialFilePath": "fb-svc-key.json"
   }
 }

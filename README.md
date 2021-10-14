@@ -1,11 +1,11 @@
-# gochat - one 2 one vedio chating app using golang & agora.io & firebase
+# gochat - one 2 one video chating app using golang & agora.io & firebase
 
 ## Run Locally
 
 Go to the project directory
 
 ```bash
-cd clean-architechture-golang
+cd gochat
 ```
 
 Install dependencies

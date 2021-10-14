@@ -5,5 +5,5 @@ import (
 )
 
 type IUsers interface {
-	Save(user map[string]interface{}) (map[string]interface{}, *errors.RestErr)
+	Save(email string, password string) (interface{}, *errors.RestErr)
 }

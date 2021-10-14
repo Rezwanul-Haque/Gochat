@@ -5,8 +5,9 @@ import (
 	"net/http"
 )
 
-const (
+var (
 	ErrSomethingWentWrong = "something went wrong"
+	ErrInvalidEmail       = NewError("invalid email")
 )
 
 type RestErr struct {

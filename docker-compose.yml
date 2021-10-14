@@ -3,7 +3,7 @@ version: '3.7'
 services:
   consul:
     image: consul:latest
-    container_name: consul_dev
+    container_name: gochat_consul
     restart: always
     ports:
       - 8500:8500
@@ -20,7 +20,7 @@ services:
     volumes:
       - ./:/project
     environment:
-      - CONSUL_URL=consul_dev:8500
+      - CONSUL_URL=gochat_consul:8500
       - CONSUL_PATH=gochat
     tty: true
     depends_on:

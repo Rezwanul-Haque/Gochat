@@ -17,16 +17,8 @@ func NewUsersService(urepo repository.IUsers) svc.IUsers {
 	}
 }
 
-func (u *users) CreateUser(usr serializers.UserReq) (map[string]interface{}, *errors.RestErr) {
-	user := map[string]interface{}{
-		"Email":       usr.Email,
-		"Phone":       usr.Phone,
-		"Password":    usr.Password,
-		"DisplayName": usr.DisplayName,
-		"ProfilePic":  usr.ProfilePic,
-	}
-
-	resp, saveErr := u.urepo.Save(user)
+func (u *users) CreateUser(usr serializers.UserReq) (interface{}, *errors.RestErr) {
+	resp, saveErr := u.urepo.Save(usr.Email, usr.Password)
 	if saveErr != nil {
 		return nil, saveErr
 	}

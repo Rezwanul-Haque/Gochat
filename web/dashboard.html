@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container pt-2">
+    <div class="jumbotron">
+        <h1 class="display-4">Hail, firebase !!</h1>
+        <p class="lead">You are logged in now. Your details are listed below</p>
+        <hr class="my-4">
+        <button class="btn btn-primary btn-lg" role="button" id="logout">Logout</button>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Key</th>
+                        <th scope="col">Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Email</td>
+                        <td id="email">Otto</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>UserId</td>
+                        <td id="userId">the Bird</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>Token</td>
+                        <td id="token">the Bird</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row my-5">
+        <div class="col-xs-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Call Service A
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary" id="service-a">Submit</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Call Service B
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary" id="service-b">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/6.2.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.3/firebase-auth.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBWzra2RfPaym9Jvm69CtjRl5y-5LjsI90",
+        authDomain: "gochat-243e2.firebaseapp.com",
+        projectId: "gochat-243e2",
+        storageBucket: "gochat-243e2.appspot.com",
+        messagingSenderId: "235245451968",
+        appId: "1:235245451968:web:c7f036880e8da5e7724b25"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    $(document).ready(() => {
+        let token = "";
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                $("#email").text(user.email);
+                $("#emailVerified").text(user.emailVerified);
+                $("#userId").text(user.uid);
+                user.getIdToken().then(t => {
+                    token = t;
+                    $("#token").text(token);
+                }).catch(e => alert(e.message));
+            } else {
+                gotoHome();
+            }
+        });
+
+        $("#logout").click(function () {
+            firebase.auth().signOut();
+            gotoHome();
+        });
+
+        $("#service-a").click(() => {
+            callService("serviceA", token)
+        });
+
+
+        $("#service-b").click(() => {
+            callService("serviceB", token)
+        });
+    });
+
+    function gotoHome() {
+        window.location.replace("http://localhost:1313/index.html");
+    }
+
+    function callService(serviceName, token) {
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "http://localhost:8080/api/v1/" + serviceName,
+            dataType: "json",
+            headers: {"id-token": token},
+            complete: (d) => alert(d.responseText)
+        });
+    }
+
+</script>
+</body>
+</html>

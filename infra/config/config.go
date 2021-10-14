@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gochat/infra/logger"
 	"log"
+	"time"
 
 	"github.com/spf13/viper"
 	_ "github.com/spf13/viper/remote"
@@ -16,7 +17,10 @@ type AppConfig struct {
 }
 
 type FireBaseConfig struct {
-	CredentialFilePath string
+	AppKey                        string
+	SignUpWithEmailAndPasswordUrl string
+	SignInWithEmailAndPasswordUrl string
+	Timeout                       time.Duration
 }
 
 type Config struct {
@@ -74,6 +78,9 @@ func setDefaultConfig() {
 	}
 
 	config.FireBase = &FireBaseConfig{
-		CredentialFilePath: "fb-svc-key.json",
+		AppKey:                        "firebase-web-app-key",
+		SignUpWithEmailAndPasswordUrl: "https://identitytoolkit.googleapis.com/v1/accounts:signUp",
+		SignInWithEmailAndPasswordUrl: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
+		Timeout:                       10,
 	}
 }

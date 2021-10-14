@@ -19,8 +19,8 @@ func NewSystemService(sysrepo repository.ISystem) svc.ISystem {
 func (sys *system) GetHealth() (*serializers.HealthResp, error) {
 	resp := serializers.HealthResp{}
 
-	// check db
-	resp.DBOnline = true
+	// check app
+	resp.AppOnline = sys.repo.AppStatus()
 
 	return &resp, nil
 }

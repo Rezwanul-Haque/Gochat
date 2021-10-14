@@ -3,14 +3,10 @@ package controllers
 import (
 	"gochat/app/serializers"
 	"gochat/app/svc"
-	"gochat/app/utils/methodsutil"
-	"gochat/app/utils/msgutil"
 	"gochat/infra/errors"
-	"gochat/infra/logger"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type users struct {
@@ -36,18 +32,13 @@ func (ctr *users) Create(c echo.Context) error {
 		return c.JSON(restErr.Status, restErr)
 	}
 
-	hashedPass, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
-	user.Password = string(hashedPass)
+	// Password hash is handled by firebase so no need to initiate hash here.
+	// hashedPass, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
+	// user.Password = string(hashedPass)
 
-	result, saveErr := ctr.uSvc.CreateUser(user)
+	resp, saveErr := ctr.uSvc.CreateUser(user)
 	if saveErr != nil {
 		return c.JSON(saveErr.Status, saveErr)
-	}
-	var resp serializers.UserResp
-	if err := methodsutil.StructToStruct(result, &resp); err != nil {
-		logger.Error(msgutil.EntityBindToStructFailedMsg("controller layer: user create"), err)
-		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
-		return c.JSON(http.StatusInternalServerError, restErr)
 	}
 
 	return c.JSON(http.StatusCreated, resp)

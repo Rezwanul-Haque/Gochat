@@ -4,6 +4,9 @@
     "port": 8080
   },
   "fireBase": {
-    "credentialFilePath": "fb-svc-key.json"
+    "appKey": "firebase-web-app-key",
+    "signUpWithEmailPasswordUrl": "https://identitytoolkit.googleapis.com/v1/accounts:signUp",
+    "signInWithEmailPasswordUrl": "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
+    "timeout": 10
   }
 }

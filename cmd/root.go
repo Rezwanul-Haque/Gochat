@@ -24,7 +24,8 @@ func init() {
 // Execute executes the root command
 func Execute() {
 	config.LoadConfig()
-	fireauth.Init()
+	// fireauth.Init()
+	fireauth.ConnectFirebase()
 
 	logger.Info("about to start the application")
 

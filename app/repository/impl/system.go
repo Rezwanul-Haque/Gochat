@@ -11,3 +11,7 @@ type system struct {
 func NewSystemRepository() repository.ISystem {
 	return &system{}
 }
+
+func (r system) AppStatus() bool {
+	return true
+}

@@ -28,31 +28,17 @@ func NewAuthController(grp interface{}, authSvc svc.IAuth, userSvc svc.IUsers) {
 }
 
 func (ctr *auth) Login(c echo.Context) error {
-	var cred *serializers.LoginReq
-	var resp *serializers.LoginResp
-	var err error
+	var cred serializers.LoginReq
 
-	if err = c.Bind(&cred); err != nil {
-		bodyErr := errors.NewBadRequestError("failed to parse request body")
+	if err := c.Bind(&cred); err != nil {
 		logger.Error("failed to parse request body", err)
+		bodyErr := errors.NewBadRequestError("failed to parse request body")
 		return c.JSON(bodyErr.Status, bodyErr)
 	}
 
-	if resp, err = ctr.authSvc.Login(cred); err != nil {
-		switch err {
-		// case errors.ErrInvalidEmail, errors.ErrInvalidPassword, errors.ErrNotAdmin:
-		// 	unAuthErr := errors.NewUnauthorizedError("invalid username or password")
-		// 	return c.JSON(unAuthErr.Status, unAuthErr)
-		// case errors.ErrCreateJwt:
-		// 	serverErr := errors.NewInternalServerError("failed to create jwt token")
-		// 	return c.JSON(serverErr.Status, serverErr)
-		// case errors.ErrStoreTokenUuid:
-		// 	serverErr := errors.NewInternalServerError("failed to store jwt token uuid")
-		// 	return c.JSON(serverErr.Status, serverErr)
-		default:
-			serverErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
-			return c.JSON(serverErr.Status, serverErr)
-		}
+	resp, lerr := ctr.authSvc.Login(&cred)
+	if lerr != nil {
+		return c.JSON(lerr.Status, lerr)
 	}
 
 	return c.JSON(http.StatusOK, resp)

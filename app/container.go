@@ -10,10 +10,11 @@ func Init(g interface{}) {
 	// register all repos impl, services impl, controllers
 	sysRepo := repoImpl.NewSystemRepository()
 	userRepo := repoImpl.NewFirebaseUsersRepository()
+	authRepo := repoImpl.NewFirebaseAuthRepository()
 
 	sysSvc := svcImpl.NewSystemService(sysRepo)
 	userSvc := svcImpl.NewUsersService(userRepo)
-	authSvc := svcImpl.NewAuthService(userRepo)
+	authSvc := svcImpl.NewAuthService(authRepo)
 
 	controllers.NewSystemController(g, sysSvc)
 	controllers.NewAuthController(g, authSvc, userSvc)

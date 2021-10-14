@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"rezwanul.cse@gmail.com\",\n    \"phone\": \"+8801819990422\",\n    \"password\": \"secret\",\n    \"display_name\": \"rezwanul-haque\",\n    \"profile_pic\": \"https://drive.google.com/file/d/1WZ3FJtV0cbr5weqVM9NDBEvRT6M22i3V/view?usp=sharing\"\n}",
+							"raw": "{\n    \"email\": \"razib01729450@gmail.com\",\n    \"password\": \"12345678\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -32,6 +32,39 @@
 								"v1",
 								"users",
 								"signup"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"razib01729450@gmail.com\",\n    \"password\": \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{url}}/v1/login",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
 							]
 						}
 					},

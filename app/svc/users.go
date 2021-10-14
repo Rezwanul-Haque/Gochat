@@ -6,5 +6,5 @@ import (
 )
 
 type IUsers interface {
-	CreateUser(serializers.UserReq) (map[string]interface{}, *errors.RestErr)
+	CreateUser(serializers.UserReq) (interface{}, *errors.RestErr)
 }

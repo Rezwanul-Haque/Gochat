@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"gochat/infra/clients/fireauth"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -19,4 +21,17 @@ func Attach(e *echo.Echo) error {
 	e.Use(middleware.Secure())
 
 	return nil
+}
+
+func CustomAuth() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			idToken := c.Request().Header.Get("id-token")
+
+			if err := fireauth.FireAuth().VerifyToken(idToken); err != nil {
+				return c.JSON(err.Status, err)
+			}
+			return next(c)
+		}
+	}
 }

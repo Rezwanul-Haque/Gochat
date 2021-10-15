@@ -3,15 +3,19 @@ module gochat
 go 1.17
 
 require (
+	firebase.google.com/go/v4 v4.6.0
+	github.com/google/uuid v1.1.2
 	github.com/labstack/echo/v4 v4.6.1
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
 	go.uber.org/zap v1.19.1
+	google.golang.org/api v0.56.0
 )
 
 require (
 	cloud.google.com/go v0.93.3 // indirect
 	cloud.google.com/go/firestore v1.6.0 // indirect
+	cloud.google.com/go/storage v1.10.0 // indirect
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/fatih/color v1.9.0 // indirect
@@ -60,7 +64,6 @@ require (
 	golang.org/x/sys v0.0.0-20210910150752-751e447fb3d0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
-	google.golang.org/api v0.56.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20210828152312-66f60bf46e71 // indirect
 	google.golang.org/grpc v1.40.0 // indirect

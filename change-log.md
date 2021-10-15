@@ -2,7 +2,13 @@
 - None
 
 ***
-## [1.0.1] - xx-10-2021
+## [1.0.2] - xx-10-2021
+### Added
+- firebase admin sdk for id token verification
+- custom auth middleware added for authenticated routes
+
+***
+## [1.0.1] - 14-10-2021
 ### Added
 - configure firebase to use rest api
 - sign up & login api added

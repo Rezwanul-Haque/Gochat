@@ -6,6 +6,54 @@
 	},
 	"item": [
 		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (responseCode.code === 200) {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    postman.setEnvironmentVariable(\"id_token\", jsonData.idToken);",
+									"    postman.setEnvironmentVariable(\"refresh_token\", jsonData.refreshToken);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"razib01729450@gmail.com\",\n    \"password\": \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{url}}/v1/login",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "User",
 			"item": [
 				{
@@ -36,35 +84,27 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Auth",
-			"item": [
+				},
 				{
-					"name": "Login",
+					"name": "CreateRoom",
 					"request": {
 						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"razib01729450@gmail.com\",\n    \"password\": \"12345678\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
+						"header": [
+							{
+								"key": "id-token",
+								"value": "{{id_token}}",
+								"type": "text"
 							}
-						},
+						],
 						"url": {
-							"raw": "{{schema}}://{{url}}/v1/login",
+							"raw": "{{schema}}://{{url}}/v1/room",
 							"protocol": "{{schema}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"v1",
-								"login"
+								"room"
 							]
 						}
 					},

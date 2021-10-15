@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"gochat/infra/config"
 	"gochat/infra/errors"
 	"gochat/infra/logger"
@@ -11,18 +12,23 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"time"
+
+	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/auth"
+	"google.golang.org/api/option"
 )
 
 type fireauthClient struct {
-	// authc *auth.Client
+	authc *auth.Client
 	httpc *http.Client
 }
 
 type LoginReq struct {
 	Email             string `json:"email"`
 	Password          string `json:"password"`
-	ReturnSecureToken bool   `json:"-"`
+	ReturnSecureToken bool   `json:"returnSecureToken"`
 }
 
 type LoginResp struct {
@@ -34,39 +40,40 @@ type LoginResp struct {
 }
 
 var (
-	myAuthClient fireauthClient
+	myAuthClient *fireauthClient
 	ctx          context.Context
 )
 
-// func Init() {
-// 	var err error
-// 	ctx = context.Background()
+func Init() {
+	var err error
+	ctx = context.Background()
 
-// 	absPath, err := filepath.Abs(config.Firebase().CredentialFilePath)
-// 	if err != nil {
-// 		panic("unable to load service account keys file")
-// 	}
+	absPath, err := filepath.Abs(config.Firebase().CredentialFilePath)
+	if err != nil {
+		panic("unable to load service account keys file")
+	}
 
-// 	opts := option.WithCredentialsFile(absPath)
-// 	app, err := firebase.NewApp(ctx, nil, opts)
-// 	if err != nil {
-// 		logger.Error("error initializing app: ", err)
-// 	}
+	opts := option.WithCredentialsFile(absPath)
+	app, err := firebase.NewApp(ctx, nil, opts)
+	if err != nil {
+		logger.Error("error initializing app: ", err)
+	}
 
-// 	logger.Info("firebase connection established...")
+	logger.Info("firebase connection established...")
 
-// 	//Firebase Auth
-// 	auth, err := app.Auth(context.Background())
-// 	if err != nil {
-// 		panic(fmt.Sprintf("firebase auth load error: %+v", err))
-// 	}
+	//Firebase Auth
+	auth, err := app.Auth(ctx)
+	if err != nil {
+		panic(fmt.Sprintf("firebase auth load error: %+v", err))
+	}
 
-// 	myAuthClient = fireauthClient{
-// 		authc: auth,
-// 	}
-// }
+	myAuthClient = &fireauthClient{
+		authc: auth,
+		httpc: ConnectFirebase(),
+	}
+}
 
-func ConnectFirebase() {
+func ConnectFirebase() *http.Client {
 	timeout := config.Firebase().Timeout * time.Second
 	var netTransport = &http.Transport{
 		DialContext:         (&net.Dialer{Timeout: timeout, KeepAlive: time.Minute}).DialContext,
@@ -74,15 +81,16 @@ func ConnectFirebase() {
 		MaxIdleConnsPerHost: 10,
 	}
 
-	myAuthClient = fireauthClient{
-		httpc: &http.Client{
-			Timeout:   timeout,
-			Transport: netTransport,
-		},
+	httpc := &http.Client{
+		Timeout:   timeout,
+		Transport: netTransport,
 	}
+
+	return httpc
+
 }
 
-func FireAuth() fireauthClient {
+func FireAuth() *fireauthClient {
 	return myAuthClient
 }
 
@@ -95,7 +103,7 @@ func (fc fireauthClient) Signup(email string, password string) (*LoginResp, *err
 
 	byteData, _ := json.Marshal(payload)
 
-	req := PrepareFirebaseURL(config.Firebase().SignUpWithEmailAndPasswordUrl, byteData, "POST")
+	req := prepareFirebaseURL(config.Firebase().SignUpWithEmailAndPasswordUrl, byteData, "POST")
 
 	res, err := fc.httpc.Do(&req)
 	if err != nil {
@@ -129,7 +137,7 @@ func (fc fireauthClient) Login(email string, password string) (*LoginResp, *erro
 
 	byteData, _ := json.Marshal(payload)
 
-	req := PrepareFirebaseURL(config.Firebase().SignInWithEmailAndPasswordUrl, byteData, "POST")
+	req := prepareFirebaseURL(config.Firebase().SignInWithEmailAndPasswordUrl, byteData, "POST")
 
 	res, err := fc.httpc.Do(&req)
 	if err != nil {
@@ -154,12 +162,23 @@ func (fc fireauthClient) Login(email string, password string) (*LoginResp, *erro
 	return &resp, nil
 }
 
-func PrepareFirebaseURL(baseUrl string, body []byte, method string) http.Request {
+func (fc fireauthClient) VerifyToken(idToken string) *errors.RestErr {
+	token, err := fc.authc.VerifyIDToken(ctx, idToken)
+	if err != nil {
+		logger.ErrorAsJson("error verifying ID token", err)
+		return errors.NewUnauthorizedError("access forbidden")
+	}
+
+	logger.InfoAsJson("Verified ID token", token)
+	return nil
+}
+
+func prepareFirebaseURL(baseUrl string, body []byte, method string) http.Request {
 	reqURL, _ := url.Parse(baseUrl)
 
 	// adding query params
 	q := url.Values{}
-	q.Add("key", config.Firebase().AppKey)
+	q.Add("key", config.Firebase().ApiKey)
 	reqURL.RawQuery = q.Encode()
 
 	req := http.Request{

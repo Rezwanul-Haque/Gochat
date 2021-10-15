@@ -17,7 +17,8 @@ type AppConfig struct {
 }
 
 type FireBaseConfig struct {
-	AppKey                        string
+	CredentialFilePath            string
+	ApiKey                        string
 	SignUpWithEmailAndPasswordUrl string
 	SignInWithEmailAndPasswordUrl string
 	Timeout                       time.Duration
@@ -78,7 +79,8 @@ func setDefaultConfig() {
 	}
 
 	config.FireBase = &FireBaseConfig{
-		AppKey:                        "firebase-web-app-key",
+		CredentialFilePath:            "fb-svc-key.json",
+		ApiKey:                        "AIzaSyBWzra2RfPaym9Jvm69CtjRl5y-5LjsI90",
 		SignUpWithEmailAndPasswordUrl: "https://identitytoolkit.googleapis.com/v1/accounts:signUp",
 		SignInWithEmailAndPasswordUrl: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
 		Timeout:                       10,

@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	m "gochat/app/http/middlewares"
 	"gochat/app/serializers"
 	"gochat/app/svc"
 	"gochat/infra/errors"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -22,6 +24,7 @@ func NewUsersController(grp interface{}, uSvc svc.IUsers) {
 	g := grp.(*echo.Group)
 
 	g.POST("/v1/users/signup", uc.Create)
+	g.POST("/v1/room", uc.CreateRoom, m.CustomAuth())
 }
 
 func (ctr *users) Create(c echo.Context) error {
@@ -42,4 +45,10 @@ func (ctr *users) Create(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, resp)
+}
+
+func (ctr *users) CreateRoom(c echo.Context) error {
+	roomID, _ := uuid.NewUUID()
+
+	return c.JSON(http.StatusCreated, map[string]interface{}{"room_id": roomID})
 }

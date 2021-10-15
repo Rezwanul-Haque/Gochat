@@ -166,10 +166,10 @@ func (fc fireauthClient) VerifyToken(idToken string) *errors.RestErr {
 	token, err := fc.authc.VerifyIDToken(ctx, idToken)
 	if err != nil {
 		logger.ErrorAsJson("error verifying ID token", err)
-		return errors.NewUnauthorizedError("access forbidden")
+		return errors.NewUnauthorizedError("unauthorized action")
 	}
 
-	logger.InfoAsJson("Verified ID token", token)
+	logger.InfoAsJson("verified ID token", token)
 	return nil
 }
 

@@ -6,12 +6,10 @@ import (
 	"gochat/app/serializers"
 	"gochat/app/svc"
 	"gochat/app/utils/consts"
-	"gochat/app/utils/methodsutil"
 	"gochat/infra/errors"
 	"io"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -36,7 +34,7 @@ func NewUsersController(grp interface{}, uSvc svc.IUsers) {
 	g.POST("/v1/users/signup", uc.Create)
 	g.POST("/v1/room", uc.CreateRoom, m.CustomAuth())
 	// g.POST("/v1/webrtc/sdp/m/:roomId/c/:userID/p/:peerId/s/:sender", uc.InstantMeeting, m.CustomAuth())
-	g.POST("/v1/webrtc/sdp/m/:meetingId/c/:userID/p/:peerId/s/:isSender", uc.InstantMeeting)
+	// g.POST("/v1/webrtc/sdp/m/:meetingId/c/:userID/p/:peerId/s/:isSender", uc.InstantMeeting)
 }
 
 func (ctr *users) Create(c echo.Context) error {
@@ -65,65 +63,46 @@ func (ctr *users) CreateRoom(c echo.Context) error {
 	return c.JSON(http.StatusCreated, map[string]interface{}{"room_id": roomID})
 }
 
-func (ctr *users) InstantMeeting(c echo.Context) error {
-	isSender, _ := strconv.ParseBool(c.Param("isSender"))
-	userID := c.Param("userID")
-	peerID := c.Param("peerId")
+// func (ctr *users) InstantMeeting(c echo.Context) error {
+// 	isSender, _ := strconv.ParseBool(c.Param("isSender"))
+// 	userID := c.Param("userID")
+// 	peerID := c.Param("peerId")
 
-	// sender to channel of track
-	peerConnectionMap := make(map[string]chan *webrtc.Track)
+// 	var session serializers.Sdp
+// 	if err := c.Bind(&session); err != nil {
+// 		restErr := errors.NewBadRequestError("invalid json body")
+// 		return c.JSON(restErr.Status, restErr)
+// 	}
+// 	offer := webrtc.SessionDescription{}
+// 	methodsutil.Decode(session.Sdp, &offer)
 
-	me := webrtc.MediaEngine{}
+// 	// Create a new RTCPeerConnection
+// 	// this is the gist of webrtc, generates and process SDP
+// 	peerConnection, err := api.NewPeerConnection(peerConnectionConfig)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	if !isSender {
+// 		recieveTrack(peerConnection, peerConnectionMap, peerID)
+// 	} else {
+// 		createTrack(peerConnection, peerConnectionMap, userID)
+// 	}
+// 	// Set the SessionDescription of remote peer
+// 	peerConnection.SetRemoteDescription(offer)
 
-	// Setup the codecs you want to use.
-	// Only support VP8(video compression), this makes our proxying code simpler
-	me.RegisterCodec(webrtc.NewRTPVP8Codec(webrtc.DefaultPayloadTypeVP8, 90000))
+// 	// Create answer
+// 	answer, err := peerConnection.CreateAnswer(nil)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	api := webrtc.NewAPI(webrtc.WithMediaEngine(me))
-
-	peerConnectionConfig := webrtc.Configuration{
-		ICEServers: []webrtc.ICEServer{
-			{
-				URLs: []string{"stun:stun.l.google.com:19302"}, // public STUN server
-			},
-		},
-	}
-
-	var session serializers.Sdp
-	if err := c.Bind(&session); err != nil {
-		restErr := errors.NewBadRequestError("invalid json body")
-		return c.JSON(restErr.Status, restErr)
-	}
-	offer := webrtc.SessionDescription{}
-	methodsutil.Decode(session.Sdp, &offer)
-
-	// Create a new RTCPeerConnection
-	// this is the gist of webrtc, generates and process SDP
-	peerConnection, err := api.NewPeerConnection(peerConnectionConfig)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if !isSender {
-		recieveTrack(peerConnection, peerConnectionMap, peerID)
-	} else {
-		createTrack(peerConnection, peerConnectionMap, userID)
-	}
-	// Set the SessionDescription of remote peer
-	peerConnection.SetRemoteDescription(offer)
-
-	// Create answer
-	answer, err := peerConnection.CreateAnswer(nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Sets the LocalDescription, and starts our UDP listeners
-	err = peerConnection.SetLocalDescription(answer)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return c.JSON(http.StatusOK, serializers.Sdp{Sdp: methodsutil.Encode(answer)})
-}
+// 	// Sets the LocalDescription, and starts our UDP listeners
+// 	err = peerConnection.SetLocalDescription(answer)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	return c.JSON(http.StatusOK, serializers.Sdp{Sdp: methodsutil.Encode(answer)})
+// }
 
 // user is the caller of the method
 // if user connects before peer: create channel and keep listening till track is added

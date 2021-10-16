@@ -1,9 +1,9 @@
-# gochat - one 2 one video chating app using golang & agora.io & firebase
+# gochat - one 2 one video chating app using golang & pion webrtc & firebase
 
 ## Prerequisites
 1. Firebase project
-2. Firebase service account keys file
-3. Firebase web api key
+2. Firebase service account keys file which can found on firebase project settings
+3. Firebase web api key which can found on firebase project settings
 
 ## Run Locally
 

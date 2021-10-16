@@ -13,11 +13,18 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"time"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
 	"google.golang.org/api/option"
+)
+
+const (
+	CONTENT_TYPE_JSON         = "application/json"
+	CONTENT_TYPE_URL_ENCODING = "application/x-www-form-urlencoded"
 )
 
 type fireauthClient struct {
@@ -37,6 +44,20 @@ type LoginResp struct {
 	RefreshToken string `json:"refreshToken"`
 	ExpiresIn    string `json:"expiresIn"`
 	LocalID      string `json:"localId"`
+}
+
+type RefreshTokenReq struct {
+	GranTType    string `json:"grant_type"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+type RefreshTokenResp struct {
+	ExpiresIn    string `json:"expires_in"`
+	TokenType    string `json:"token_type"`
+	RefreshToken string `json:"refresh_token"`
+	IDToken      string `json:"id_token"`
+	UserID       string `json:"user_id"`
+	ProjectID    string `json:"-"`
 }
 
 var (
@@ -103,7 +124,7 @@ func (fc fireauthClient) Signup(email string, password string) (*LoginResp, *err
 
 	byteData, _ := json.Marshal(payload)
 
-	req := prepareFirebaseURL(config.Firebase().SignUpWithEmailAndPasswordUrl, byteData, "POST")
+	req := prepareFirebaseURL(config.Firebase().SignUpWithEmailAndPasswordUrl, byteData, "POST", CONTENT_TYPE_JSON)
 
 	res, err := fc.httpc.Do(&req)
 	if err != nil {
@@ -137,7 +158,7 @@ func (fc fireauthClient) Login(email string, password string) (*LoginResp, *erro
 
 	byteData, _ := json.Marshal(payload)
 
-	req := prepareFirebaseURL(config.Firebase().SignInWithEmailAndPasswordUrl, byteData, "POST")
+	req := prepareFirebaseURL(config.Firebase().SignInWithEmailAndPasswordUrl, byteData, "POST", CONTENT_TYPE_JSON)
 
 	res, err := fc.httpc.Do(&req)
 	if err != nil {
@@ -162,6 +183,67 @@ func (fc fireauthClient) Login(email string, password string) (*LoginResp, *erro
 	return &resp, nil
 }
 
+func (fc fireauthClient) RefreshToken(rtoken string) (*RefreshTokenResp, *errors.RestErr) {
+	payload := &RefreshTokenReq{
+		GranTType:    "refresh_token",
+		RefreshToken: rtoken,
+	}
+
+	data := url.Values{}
+	data.Set("grant_type", payload.GranTType)
+	data.Set("refresh_token", payload.RefreshToken)
+	encodedData := data.Encode()
+
+	reqURL, _ := url.Parse(config.Firebase().RefreshTokenUrl)
+
+	// adding query params
+	q := url.Values{}
+	q.Add("key", config.Firebase().ApiKey)
+	reqURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest("POST", reqURL.String(), strings.NewReader(encodedData))
+	if err != nil {
+		logger.Error("firebase requesting error", err)
+		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
+		return nil, restErr
+	}
+	req.Header.Add("Content-Type", CONTENT_TYPE_URL_ENCODING)
+	req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
+
+	res, err := fc.httpc.Do(req)
+	if err != nil {
+		logger.Error("firebase requesting error", err)
+		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
+		return nil, restErr
+	}
+
+	if res.StatusCode == http.StatusOK {
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			logger.Error("reading response body from firebase", err)
+			restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
+			return nil, restErr
+		}
+
+		var resp RefreshTokenResp
+
+		json.Unmarshal(body, &resp)
+
+		logger.InfoAsJson("firebase response after renew refresh token", resp)
+
+		return &resp, nil
+	}
+
+	logger.Info(fmt.Sprintf("firebase response status code: %+v", res.StatusCode))
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(res.Body)
+	newStr := buf.String()
+	logger.Info(fmt.Sprintf("firebase response after: %+v", newStr))
+
+	restErr := errors.NewUnauthorizedError(errors.ErrInvalidRefreshToken)
+	return nil, restErr
+}
+
 func (fc fireauthClient) VerifyToken(idToken string) *errors.RestErr {
 	token, err := fc.authc.VerifyIDToken(ctx, idToken)
 	if err != nil {
@@ -173,7 +255,7 @@ func (fc fireauthClient) VerifyToken(idToken string) *errors.RestErr {
 	return nil
 }
 
-func prepareFirebaseURL(baseUrl string, body []byte, method string) http.Request {
+func prepareFirebaseURL(baseUrl string, body []byte, method, contentType string) http.Request {
 	reqURL, _ := url.Parse(baseUrl)
 
 	// adding query params
@@ -185,7 +267,7 @@ func prepareFirebaseURL(baseUrl string, body []byte, method string) http.Request
 		Method: method,
 		URL:    reqURL,
 		Header: map[string][]string{
-			"Content-Type": {"application/json"},
+			"Content-Type": {contentType},
 		},
 		Body:          ioutil.NopCloser(bytes.NewReader(body)),
 		ContentLength: int64(len(body)),

@@ -22,3 +22,12 @@ func (r auth) Login(email string, password string) (interface{}, *errors.RestErr
 
 	return resp, err
 }
+
+func (r auth) RefreshToken(token string) (interface{}, *errors.RestErr) {
+	resp, err := fireauth.FireAuth().RefreshToken(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, err
+}

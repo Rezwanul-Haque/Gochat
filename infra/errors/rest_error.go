@@ -6,8 +6,9 @@ import (
 )
 
 var (
-	ErrSomethingWentWrong = "something went wrong"
-	ErrInvalidEmail       = NewError("invalid email")
+	ErrSomethingWentWrong  = "something went wrong"
+	ErrInvalidEmail        = NewError("invalid email")
+	ErrInvalidRefreshToken = "refresh token expried"
 )
 
 type RestErr struct {

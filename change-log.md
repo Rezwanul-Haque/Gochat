@@ -6,6 +6,7 @@
 ### Added
 - firebase admin sdk for id token verification
 - custom auth middleware added for authenticated routes
+- id token renew using refresh token added 
 
 ***
 ## [1.0.1] - 14-10-2021

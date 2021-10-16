@@ -25,3 +25,12 @@ func (a *auth) Login(req *serializers.LoginReq) (interface{}, *errors.RestErr) {
 
 	return resp, nil
 }
+
+func (a *auth) RefreshToken(req *serializers.RefreshTokenReq) (interface{}, *errors.RestErr) {
+	resp, err := a.arepo.RefreshToken(req.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}

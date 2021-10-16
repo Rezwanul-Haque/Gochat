@@ -25,6 +25,7 @@ func NewAuthController(grp interface{}, authSvc svc.IAuth, userSvc svc.IUsers) {
 	g := grp.(*echo.Group)
 
 	g.POST("/v1/login", ac.Login)
+	g.POST("/v1/token/refresh", ac.RefreshToken)
 }
 
 func (ctr *auth) Login(c echo.Context) error {
@@ -39,6 +40,23 @@ func (ctr *auth) Login(c echo.Context) error {
 	resp, lerr := ctr.authSvc.Login(&cred)
 	if lerr != nil {
 		return c.JSON(lerr.Status, lerr)
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+func (ctr *auth) RefreshToken(c echo.Context) error {
+	var rt serializers.RefreshTokenReq
+
+	if err := c.Bind(&rt); err != nil {
+		logger.Error("failed to parse request body", err)
+		bodyErr := errors.NewBadRequestError("failed to parse request body")
+		return c.JSON(bodyErr.Status, bodyErr)
+	}
+
+	resp, rterr := ctr.authSvc.RefreshToken(&rt)
+	if rterr != nil {
+		return c.JSON(rterr.Status, rterr)
 	}
 
 	return c.JSON(http.StatusOK, resp)

@@ -5,7 +5,7 @@
   },
   "fireBase": {
     "credentialFilePath": "fb-svc-key.json",
-    "apiKey": "firebase-web-app-key",
+    "apiKey": "firebase-web-api-key",
     "signUpWithEmailPasswordUrl": "https://identitytoolkit.googleapis.com/v1/accounts:signUp",
     "signInWithEmailPasswordUrl": "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
     "refreshTokenUrl": "https://securetoken.googleapis.com/v1/token",

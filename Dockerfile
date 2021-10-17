@@ -32,8 +32,10 @@ FROM scratch AS final
 COPY --from=builder /user/group /user/passwd /etc/
 # Import the Certificate-Authority certificates for enabling HTTPS.
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+# Import the firebase service account keys file
+COPY --chown=nobody:nobody --from=builder /src/fb-svc-key.json fb-svc-key.json
 # Import the compiled executable from the first stage.
-COPY --from=builder /app /app
+COPY --chown=nobody:nobody --from=builder /app /app
 
 # Perform any further action as an unprivileged user.
 USER nobody:nobody

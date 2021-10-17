@@ -29,6 +29,10 @@ Start the server using Docker
 
 ```bash
 make development
+
+or 
+
+./run.sh
 ```
 
 

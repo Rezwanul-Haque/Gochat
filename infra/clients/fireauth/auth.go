@@ -74,6 +74,8 @@ func Init() {
 		panic("unable to load service account keys file")
 	}
 
+	logger.Info("absPath: " + absPath)
+
 	opts := option.WithCredentialsFile(absPath)
 	app, err := firebase.NewApp(ctx, nil, opts)
 	if err != nil {

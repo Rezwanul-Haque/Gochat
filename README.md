@@ -1,4 +1,4 @@
-# gochat - one 2 one video chating app using golang & pion webrtc & firebase
+# gochat - basic one 2 one video chating app using golang & websocket + webrtc & firebase
 
 ## Prerequisites
 1. Firebase project

@@ -19,4 +19,5 @@ func Init(g interface{}) {
 	controllers.NewSystemController(g, sysSvc)
 	controllers.NewAuthController(g, authSvc, userSvc)
 	controllers.NewUsersController(g, userSvc)
+	controllers.NewRoomsController(g)
 }

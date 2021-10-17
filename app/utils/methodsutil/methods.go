@@ -10,8 +10,10 @@ import (
 	"gochat/app/utils/consts"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
 func StructToStruct(input interface{}, output interface{}) error {
@@ -20,6 +22,19 @@ func StructToStruct(input interface{}, output interface{}) error {
 	} else {
 		return err
 	}
+}
+
+func RandomText(length int) string {
+	rand.Seed(time.Now().UnixNano())
+	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	b := make([]rune, length)
+
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+
+	return string(b)
+
 }
 
 // MustReadStdin blocks until input is received from stdin

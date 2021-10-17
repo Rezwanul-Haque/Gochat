@@ -2,11 +2,13 @@
 - None
 
 ***
-## [1.0.2] - xx-10-2021
+## [1.0.2] - 17-10-2021
 ### Added
 - firebase admin sdk for id token verification
 - custom auth middleware added for authenticated routes
-- id token renew using refresh token added 
+- id token renew using refresh token added
+- room and join room authenticated route added
+- react base web client added
 
 ***
 ## [1.0.1] - 14-10-2021

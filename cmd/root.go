@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"gochat/infra/clients/fireauth"
-	"gochat/infra/clients/webrtc"
 	"gochat/infra/config"
 	"gochat/infra/logger"
 	"os"
@@ -14,7 +13,7 @@ import (
 var (
 	RootCmd = &cobra.Command{
 		Use:   "gochat code",
-		Short: "implementing gochat architecture in golang",
+		Short: "implementing gochat video app in golang",
 	}
 )
 
@@ -26,7 +25,6 @@ func init() {
 func Execute() {
 	config.LoadConfig()
 	fireauth.Init() // initialize admin sdk
-	webrtc.Init()
 
 	logger.Info("about to start the application")
 

@@ -4,9 +4,8 @@ go 1.17
 
 require (
 	firebase.google.com/go/v4 v4.6.0
-	github.com/google/uuid v1.1.2
+	github.com/gorilla/websocket v1.4.2
 	github.com/labstack/echo/v4 v4.6.1
-	github.com/pion/webrtc/v2 v2.2.26
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
 	go.uber.org/zap v1.19.1
@@ -18,7 +17,6 @@ require (
 	cloud.google.com/go/firestore v1.6.0 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
-	github.com/cheekybits/genny v1.0.0 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
@@ -38,9 +36,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/labstack/gommon v0.3.0 // indirect
-	github.com/lucas-clemente/quic-go v0.7.1-0.20190401152353-907071221cf9 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
-	github.com/marten-seemann/qtls v0.2.3 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
@@ -48,22 +44,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
-	github.com/pion/datachannel v1.4.21 // indirect
-	github.com/pion/dtls/v2 v2.0.2 // indirect
-	github.com/pion/ice v0.7.18 // indirect
-	github.com/pion/logging v0.2.2 // indirect
-	github.com/pion/mdns v0.0.4 // indirect
-	github.com/pion/quic v0.1.1 // indirect
-	github.com/pion/randutil v0.1.0 // indirect
-	github.com/pion/rtcp v1.2.3 // indirect
-	github.com/pion/rtp v1.6.0 // indirect
-	github.com/pion/sctp v1.7.10 // indirect
-	github.com/pion/sdp/v2 v2.4.0 // indirect
-	github.com/pion/srtp v1.5.1 // indirect
-	github.com/pion/stun v0.3.5 // indirect
-	github.com/pion/transport v0.10.1 // indirect
-	github.com/pion/turn/v2 v2.0.4 // indirect
-	github.com/pion/udp v0.1.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sagikazarmark/crypt v0.1.0 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
@@ -85,7 +65,6 @@ require (
 	golang.org/x/sys v0.0.0-20210910150752-751e447fb3d0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20210828152312-66f60bf46e71 // indirect
 	google.golang.org/grpc v1.40.0 // indirect

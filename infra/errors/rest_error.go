@@ -9,6 +9,7 @@ var (
 	ErrSomethingWentWrong  = "something went wrong"
 	ErrInvalidEmail        = NewError("invalid email")
 	ErrInvalidRefreshToken = "refresh token expried"
+	ErrInvalidIdToken      = NewError("invalid id token")
 )
 
 type RestErr struct {

@@ -9,6 +9,7 @@
 - id token renew using refresh token added
 - room and join room authenticated route added
 - react base web client added
+- need to pass id token as bearer token in auth header
 
 ***
 ## [1.0.1] - 14-10-2021

@@ -33,8 +33,8 @@ func NewRoomsController(grp interface{}) {
 
 	AllRooms.Init()
 
-	g.POST("/v1/room", rc.CreateRoom, m.CustomAuth())
-	g.POST("/v1/join", rc.JoinRoom, m.CustomAuth())
+	g.GET("/v1/room", rc.CreateRoom, m.CustomAuth())
+	g.GET("/v1/join", rc.JoinRoom, m.CustomAuth())
 	// g.GET("/v1/room", rc.CreateRoom) // testing purposes only
 	// g.GET("/v1/join", rc.JoinRoom) // testing purposes only
 }

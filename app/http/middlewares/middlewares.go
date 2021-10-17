@@ -2,6 +2,8 @@ package middlewares
 
 import (
 	"gochat/infra/clients/fireauth"
+	"gochat/infra/errors"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -26,7 +28,10 @@ func Attach(e *echo.Echo) error {
 func CustomAuth() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			idToken := c.Request().Header.Get("id-token")
+			idToken, err := accessTokenFromHeader(c)
+			if err != nil {
+				return c.JSON(http.StatusUnauthorized, errors.NewUnauthorizedError(err.Error()))
+			}
 
 			if err := fireauth.FireAuth().VerifyToken(idToken); err != nil {
 				return c.JSON(err.Status, err)
@@ -34,4 +39,18 @@ func CustomAuth() echo.MiddlewareFunc {
 			return next(c)
 		}
 	}
+}
+
+func accessTokenFromHeader(c echo.Context) (string, error) {
+	header := "Authorization"
+	authScheme := "Bearer"
+
+	auth := c.Request().Header.Get(header)
+	l := len(authScheme)
+
+	if len(auth) > l+1 && auth[:l] == authScheme {
+		return auth[l+1:], nil
+	}
+
+	return "", errors.ErrInvalidIdToken
 }

@@ -107,7 +107,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"razib01729450@gmail.com\",\n    \"password\": \"12345678\"\n}",
+							"raw": "{\n    \"email\": \"rezwanul.cse@gmail.com\",\n    \"password\": \"12345678\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -128,11 +128,30 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Rooms",
+			"item": [
 				{
-					"name": "CreateRoom",
+					"name": "Create Room",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (responseCode.code === 200) {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    postman.setEnvironmentVariable(\"room_id\", jsonData.room_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "id-token",
@@ -149,6 +168,37 @@
 							"path": [
 								"v1",
 								"room"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Join Room",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "id-token",
+								"value": "{{id_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{schema}}://{{url}}/v1/join?roomID={{room_id}}",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"join"
+							],
+							"query": [
+								{
+									"key": "roomID",
+									"value": "{{room_id}}"
+								}
 							]
 						}
 					},

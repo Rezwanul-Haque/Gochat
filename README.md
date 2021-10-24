@@ -13,6 +13,12 @@ Go to the project directory
 cd gochat
 ```
 
+Put the firebase service account key file
+> check the **fb-svc-key.example.json** file for reference
+```
+fb-svc-key.json
+```
+
 Install dependencies
 
 ```bash

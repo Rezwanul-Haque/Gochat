@@ -2,8 +2,8 @@
 
 ## Prerequisites
 1. Firebase project
-2. Firebase service account keys file which can found on firebase project settings service account tab
-3. Firebase web api key which can found on firebase project settings general tab
+2. Firebase service account keys file which can found on firebase project settings `service account` tab
+3. Firebase web api key which can found on firebase project settings `general` tab
 
 ## Run Locally (Server)
 

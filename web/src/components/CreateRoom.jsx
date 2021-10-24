@@ -1,20 +1,34 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 
 const CreateRoom = (props) => {
-    const create = async (e) => {
-        e.preventDefault();
+  const history = useHistory();
 
-        const resp = await fetch("http://localhost:8080/api/v1/room");
-        const { room_id } = await resp.json();
+  const create = async (e) => {
+    e.preventDefault();
 
-		props.history.push(`/room/${room_id}`)
-    };
+    const resp = await fetch("http://localhost:8080/api/v1/room", {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        Authorization: window.localStorage.getItem("current_user")
+          ? "Bearer " +
+            JSON.parse(window.localStorage.getItem("current_user")).idToken
+          : "",
+      },
+    });
+    const { room_id } = await resp.json();
 
-    return (
-        <div>
-            <button onClick={create}>Create Room</button>
-        </div>
-    );
+    console.log(room_id);
+
+    props.history.push(`/room/${room_id}`);
+  };
+
+  return (
+    <div>
+      <button onClick={create}>Create Room</button>
+    </div>
+  );
 };
 
 export default CreateRoom;

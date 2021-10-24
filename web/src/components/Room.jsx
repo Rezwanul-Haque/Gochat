@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 
 const Room = (props) => {
+    console.log(props.match);
     const userVideo = useRef();
     const userStream = useRef();
     const partnerVideo = useRef();

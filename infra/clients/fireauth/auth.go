@@ -180,6 +180,10 @@ func (fc fireauthClient) Login(email string, password string) (*LoginResp, *erro
 
 	json.Unmarshal(body, &resp)
 
+	if resp.IDToken == "" || resp.Email == "" || resp.RefreshToken == "" {
+		return nil, errors.NewUnauthorizedError("email/password is not correct")
+	}
+
 	logger.InfoAsJson("firebase response after login", resp)
 
 	return &resp, nil

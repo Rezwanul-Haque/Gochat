@@ -4,6 +4,7 @@
 1. Firebase project
 2. Firebase service account keys file which can found on firebase project settings `service account` tab
 3. Firebase web api key which can found on firebase project settings `general` tab
+4. agora project app key and app certificate which can found on agora `project management` tab
 
 ## Run Locally (Server)
 

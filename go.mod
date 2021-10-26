@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	firebase.google.com/go/v4 v4.6.0
+	github.com/AgoraIO-Community/go-tokenbuilder v1.0.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/labstack/echo/v4 v4.6.1
 	github.com/spf13/cobra v1.2.1
@@ -16,7 +17,6 @@ require (
 	cloud.google.com/go v0.93.3 // indirect
 	cloud.google.com/go/firestore v1.6.0 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect
-	github.com/AgoraIO-Community/go-tokenbuilder v1.0.0 // indirect
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/fatih/color v1.9.0 // indirect

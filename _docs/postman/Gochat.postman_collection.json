@@ -213,6 +213,64 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "RTC Token",
+			"item": [
+				{
+					"name": "Create Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (responseCode.code === 200) {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    postman.setEnvironmentVariable(\"room_id\", jsonData.room_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{id_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"channel_name\": \"testing\",\n    \"role\": \"publisher\",\n    \"token_type\": \"userAccount\",\n    \"uid\": \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{url}}/v1/rtc/token",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"rtc",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

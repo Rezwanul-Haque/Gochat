@@ -11,8 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type rooms struct {
-}
+type rooms struct{}
 
 var (
 	upgrader = websocket.Upgrader{

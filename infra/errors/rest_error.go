@@ -8,6 +8,7 @@ import (
 var (
 	ErrSomethingWentWrong  = "something went wrong"
 	ErrInvalidEmail        = NewError("invalid email")
+	ErrInvalidRequestBody  = "invalid request body"
 	ErrInvalidRefreshToken = "refresh token expried"
 	ErrInvalidIdToken      = NewError("invalid id token")
 )

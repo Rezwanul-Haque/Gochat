@@ -10,5 +10,11 @@
     "SignInWithEmailAndPasswordUrl": "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
     "refreshTokenUrl": "https://securetoken.googleapis.com/v1/token",
     "timeout": 10
+  },
+  "agora": {
+    "appID": "agora-project-app-id",
+    "appCertificate": "agora-project-app-certificate",
+    "defaultExpiresIn": 3600,
+    "tokenTypes":       ["userAccount", "uid"]
   }
 }

@@ -11,13 +11,16 @@ func Init(g interface{}) {
 	sysRepo := repoImpl.NewSystemRepository()
 	userRepo := repoImpl.NewFirebaseUsersRepository()
 	authRepo := repoImpl.NewFirebaseAuthRepository()
+	tokenRepo := repoImpl.NewTokenRepository()
 
 	sysSvc := svcImpl.NewSystemService(sysRepo)
 	userSvc := svcImpl.NewUsersService(userRepo)
 	authSvc := svcImpl.NewAuthService(authRepo)
+	tokenSvc := svcImpl.NewTokenService(tokenRepo)
 
 	controllers.NewSystemController(g, sysSvc)
 	controllers.NewAuthController(g, authSvc, userSvc)
 	controllers.NewUsersController(g, userSvc)
 	controllers.NewRoomsController(g)
+	controllers.NewTokenController(g, tokenSvc)
 }

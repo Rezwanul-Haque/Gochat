@@ -16,6 +16,7 @@ require (
 	cloud.google.com/go v0.93.3 // indirect
 	cloud.google.com/go/firestore v1.6.0 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect
+	github.com/AgoraIO-Community/go-tokenbuilder v1.0.0 // indirect
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/fatih/color v1.9.0 // indirect

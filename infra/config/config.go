@@ -25,9 +25,17 @@ type FireBaseConfig struct {
 	Timeout                       time.Duration
 }
 
+type AgoraConfig struct {
+	AppID            string
+	AppCertificate   string
+	DefaultExpiresIn uint32
+	TokenTypes       []string
+}
+
 type Config struct {
 	App      *AppConfig
 	FireBase *FireBaseConfig
+	Agora    *AgoraConfig
 }
 
 var config Config
@@ -38,6 +46,10 @@ func App() *AppConfig {
 
 func Firebase() *FireBaseConfig {
 	return config.FireBase
+}
+
+func Agora() *AgoraConfig {
+	return config.Agora
 }
 
 func LoadConfig() {
@@ -81,10 +93,17 @@ func setDefaultConfig() {
 
 	config.FireBase = &FireBaseConfig{
 		CredentialFilePath:            "fb-svc-key.json",
-		ApiKey:                        "AIzaSyBSiZB6mFgpbOe3--_usMcIRnCqpVDkr8I",
+		ApiKey:                        "firebase-web-api-key",
 		SignUpWithEmailAndPasswordUrl: "https://identitytoolkit.googleapis.com/v1/accounts:signUp",
 		SignInWithEmailAndPasswordUrl: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
 		RefreshTokenUrl:               "https://securetoken.googleapis.com/v1/token",
 		Timeout:                       10,
+	}
+
+	config.Agora = &AgoraConfig{
+		AppID:            "agora-project-app-id",
+		AppCertificate:   "agora-project-app-certificate",
+		DefaultExpiresIn: 3600, // default expires in 3600 seconds
+		TokenTypes:       []string{"userAccount", "uid"},
 	}
 }

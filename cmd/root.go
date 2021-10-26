@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"gochat/infra/clients/fireauth"
+	"gochat/infra/clients/firebasec"
 	"gochat/infra/config"
 	"gochat/infra/logger"
 	"os"
@@ -24,7 +24,7 @@ func init() {
 // Execute executes the root command
 func Execute() {
 	config.LoadConfig()
-	fireauth.Init() // initialize admin sdk
+	firebasec.Init() // initialize admin sdk
 
 	logger.Info("about to start the application")
 

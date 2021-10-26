@@ -2,7 +2,7 @@ package impl
 
 import (
 	"gochat/app/repository"
-	"gochat/infra/clients/fireauth"
+	"gochat/infra/clients/firebasec"
 	"gochat/infra/errors"
 )
 
@@ -15,7 +15,7 @@ func NewFirebaseAuthRepository() repository.IAuth {
 }
 
 func (r auth) Login(email string, password string) (interface{}, *errors.RestErr) {
-	resp, err := fireauth.FireAuth().Login(email, password)
+	resp, err := firebasec.Auth().Login(email, password)
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +24,7 @@ func (r auth) Login(email string, password string) (interface{}, *errors.RestErr
 }
 
 func (r auth) RefreshToken(token string) (interface{}, *errors.RestErr) {
-	resp, err := fireauth.FireAuth().RefreshToken(token)
+	resp, err := firebasec.Auth().RefreshToken(token)
 	if err != nil {
 		return nil, err
 	}

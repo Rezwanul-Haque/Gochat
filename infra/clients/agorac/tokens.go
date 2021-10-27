@@ -49,7 +49,8 @@ func (ac *agoraClient) GenerateRTCToken(channelName, tokenType, uid, role string
 
 	if tokenType == config.Agora().TokenTypes[0] {
 		logger.Info(fmt.Sprintf("building token with user account: %v", uid))
-		resp.RtcToken, err = rtctokenbuilder.BuildTokenWithUserAccount(config.Agora().AppID,
+		resp.RtcToken, err = rtctokenbuilder.BuildTokenWithUserAccount(
+			config.Agora().AppID,
 			config.Agora().AppCertificate,
 			channelName,
 			uid,

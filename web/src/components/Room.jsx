@@ -1,155 +1,64 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState } from "react";
+import { Button, Input } from "@material-ui/core";
+import VideoCall from "./VideoCall";
 
 const Room = (props) => {
-    console.log(props.match);
-    const userVideo = useRef();
-    const userStream = useRef();
-    const partnerVideo = useRef();
-    const peerRef = useRef();
-    const webSocketRef = useRef();
+  const [token, setToken] = useState("");
+  const [inCall, setInCall] = useState(false);
+  const [rtcTokenExists, setRtcTokenExists] = useState(false);
 
-    const openCamera = async () => {
-        const allDevices = await navigator.mediaDevices.enumerateDevices();
-        const cameras = allDevices.filter(
-            (device) => device.kind == "videoinput"
-        );
-        console.log(cameras);
+  const joinCall = async (e) => {
+    e.preventDefault();
 
-        const constraints = {
-            audio: true,
-            video: {
-                deviceId: cameras[1].deviceId,
-            },
-        };
+    const exists = window.localStorage.getItem("rtc_token") ? true : false;
+    setRtcTokenExists(exists);
 
-        try {
-            return await navigator.mediaDevices.getUserMedia(constraints);
-        } catch (err) {
-            console.log(err);
-        }
-    };
+    if (!rtcTokenExists) {
+      const resp = await fetch("http://localhost:8080/api/v1/rtc/token", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: window.localStorage.getItem("current_user")
+            ? "Bearer " +
+              JSON.parse(window.localStorage.getItem("current_user")).idToken
+            : "",
+        },
+        body: JSON.stringify({
+          channel_name: window.localStorage.getItem("channel_name")
+            ? window.localStorage.getItem("channel_name")
+            : null,
+          role: "publisher",
+          token_type: "uid",
+          uid: "0",
+        }),
+      });
 
-    useEffect(() => {
-        openCamera().then((stream) => {
-            userVideo.current.srcObject = stream;
-            userStream.current = stream;
+      const { rtc_token } = await resp.json();
+      setToken(rtc_token);
+      console.log(rtc_token);
+      window.localStorage.setItem("rtc_token", rtc_token);
+    } else {
+      const rtc_token = window.localStorage.getItem("rtc_token");
+      console.log("rtc_token", rtc_token);
+      setToken(rtc_token);
+    }
+    
+    setInCall(true);
+  };
 
-            webSocketRef.current = new WebSocket(
-                `ws://localhost:8080/api/v1/join?roomID=${props.match.params.roomID}`
-            );
-
-            webSocketRef.current.addEventListener("open", () => {
-                webSocketRef.current.send(JSON.stringify({ join: true }));
-            });
-
-            webSocketRef.current.addEventListener("message", async (e) => {
-                const message = JSON.parse(e.data);
-
-                if (message.join) {
-                    callUser();
-                }
-
-				if (message.offer) {
-                    handleOffer(message.offer);
-                }
-
-                if (message.answer) {
-                    console.log("Receiving Answer");
-                    peerRef.current.setRemoteDescription(
-                        new RTCSessionDescription(message.answer)
-                    );
-                }
-
-                if (message.iceCandidate) {
-                    console.log("Receiving and Adding ICE Candidate");
-                    try {
-                        await peerRef.current.addIceCandidate(
-                            message.iceCandidate
-                        );
-                    } catch (err) {
-                        console.log("Error Receiving ICE Candidate", err);
-                    }
-                }
-            });
-        });
-    });
-
-    const handleOffer = async (offer) => {
-        console.log("Received Offer, Creating Answer");
-        peerRef.current = createPeer();
-
-        await peerRef.current.setRemoteDescription(
-            new RTCSessionDescription(offer)
-        );
-
-        userStream.current.getTracks().forEach((track) => {
-            peerRef.current.addTrack(track, userStream.current);
-        });
-
-        const answer = await peerRef.current.createAnswer();
-        await peerRef.current.setLocalDescription(answer);
-
-        webSocketRef.current.send(
-            JSON.stringify({ answer: peerRef.current.localDescription })
-        );
-    };
-
-    const callUser = () => {
-        console.log("Calling Other User");
-        peerRef.current = createPeer();
-
-        userStream.current.getTracks().forEach((track) => {
-            peerRef.current.addTrack(track, userStream.current);
-        });
-    };
-
-    const createPeer = () => {
-        console.log("Creating Peer Connection");
-        const peer = new RTCPeerConnection({
-            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-        });
-
-        peer.onnegotiationneeded = handleNegotiationNeeded;
-        peer.onicecandidate = handleIceCandidateEvent;
-        peer.ontrack = handleTrackEvent;
-
-        return peer;
-    };
-
-    const handleNegotiationNeeded = async () => {
-        console.log("Creating Offer");
-
-        try {
-            const myOffer = await peerRef.current.createOffer();
-            await peerRef.current.setLocalDescription(myOffer);
-
-            webSocketRef.current.send(
-                JSON.stringify({ offer: peerRef.current.localDescription })
-            );
-        } catch (err) {}
-    };
-
-    const handleIceCandidateEvent = (e) => {
-        console.log("Found Ice Candidate");
-        if (e.candidate) {
-            console.log(e.candidate);
-            webSocketRef.current.send(
-                JSON.stringify({ iceCandidate: e.candidate })
-            );
-        }
-    };
-
-    const handleTrackEvent = (e) => {
-        console.log("Received Tracks");
-        partnerVideo.current.srcObject = e.streams[0];
-    };
-
-    return (
-        <div>
-            <video autoPlay controls={true} ref={userVideo}></video>
-            <video autoPlay controls={true} ref={partnerVideo}></video>
-        </div>
-    );
+  return (
+    <div style={{ height: "100%" }}>
+      {inCall ? (
+        <VideoCall setInCall={setInCall} channelName={props.match.params.roomID} token={token} />
+      ) : (
+        <Button variant="contained" color="primary" onClick={joinCall}>
+          Join Call
+        </Button>
+      )}
+      <Input variant="contained" color="primary" placeholder="channel name" value={props.match.params.roomID} />
+      <Input variant="contained" color="primary" placeholder="rtc token" value={token}/>
+    </div>
+  );
 };
 
 export default Room;

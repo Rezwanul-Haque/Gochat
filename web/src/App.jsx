@@ -46,6 +46,8 @@ function App() {
   async function handleLogout() {
     // Log the user out
     window.localStorage.removeItem("current_user");
+    window.localStorage.removeItem("channel_name");
+    window.localStorage.removeItem("rtc_token");
 
     userHasAuthenticated(false);
 
@@ -86,7 +88,7 @@ function App() {
           </Route>
           <Route exact path="/room" component={CreateRoom}>
             {/* <CreateRoom {...routeProps} /> */}
-          </Route>
+          </Route>          
           <Route path="/room/:roomID" component={Room}>
             {/* <Room {...routeProps} /> */}
           </Route>

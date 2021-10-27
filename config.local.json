@@ -14,7 +14,7 @@
   "agora": {
     "appID": "agora-project-app-id",
     "appCertificate": "agora-project-app-certificate",
-    "defaultExpiresIn": 3600,
+    "defaultExpiresIn": 86400,
     "tokenTypes":       ["userAccount", "uid"]
   }
 }

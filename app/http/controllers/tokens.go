@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	m "gochat/app/http/middlewares"
 	"gochat/app/serializers"
 	"gochat/app/svc"
 	"gochat/infra/errors"
@@ -22,8 +23,7 @@ func NewTokenController(grp interface{}, tSvc svc.ITokens) {
 
 	g := grp.(*echo.Group)
 
-	// g.GET("/v1/rtc/token", rc.CreateToken, m.CustomAuth())
-	g.POST("/v1/rtc/token", rc.CreateToken) // testing purposes only
+	g.POST("/v1/rtc/token", rc.CreateToken, m.CustomAuth())
 }
 
 // CreateToken Create a RTC token for agora client app

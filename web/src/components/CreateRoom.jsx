@@ -1,8 +1,6 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
 
 const CreateRoom = (props) => {
-  const history = useHistory();
 
   const create = async (e) => {
     e.preventDefault();
@@ -21,12 +19,14 @@ const CreateRoom = (props) => {
 
     console.log(room_id);
 
+    window.localStorage.setItem("channel_name", room_id);
+
     props.history.push(`/room/${room_id}`);
   };
 
   return (
     <div>
-      <button onClick={create}>Create Room</button>
+      <button onClick={create}>Create Channel</button>
     </div>
   );
 };

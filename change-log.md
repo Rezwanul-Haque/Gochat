@@ -3,10 +3,13 @@
 - sign up page nav bar bug fix - always shows logut on signup page
 
 ***
-## [1.0.4] - 27-10-2021
-### Changed
+## [1.0.4] - 28-10-2021
+### Added
+- web app modified to support agora
 - agora client added
 - token api added to generate rtc token
+### Removed
+- manual websocket and webrtc web app part removed
 
 ***
 ## [1.0.3] - 24-10-2021

@@ -3,7 +3,6 @@ package controllers
 import (
 	m "gochat/app/http/middlewares"
 	"gochat/app/serializers"
-	"gochat/infra/errors"
 	"gochat/infra/logger"
 	"net/http"
 
@@ -33,7 +32,7 @@ func NewRoomsController(grp interface{}) {
 	AllRooms.Init()
 
 	g.GET("/v1/room", rc.CreateRoom, m.CustomAuth())
-	g.GET("/v1/join", rc.JoinRoom)
+	// g.GET("/v1/join", rc.JoinRoom)
 	// g.GET("/v1/room", rc.CreateRoom) // testing purposes only
 	// g.GET("/v1/join", rc.JoinRoom) // testing purposes only
 }
@@ -47,61 +46,61 @@ func (ctr *rooms) CreateRoom(c echo.Context) error {
 }
 
 // JoinRoom will join the client in a particular room
-func (ctr *rooms) JoinRoom(c echo.Context) error {
-	roomID := c.QueryParam("roomID")
+// func (ctr *rooms) JoinRoom(c echo.Context) error {
+// 	roomID := c.QueryParam("roomID")
 
-	if roomID == "" {
-		logger.Info("roomID missing in url parameters")
-		restErr := errors.NewBadRequestError("room id cannot be empty")
-		return c.JSON(restErr.Status, restErr)
-	}
+// 	if roomID == "" {
+// 		logger.Info("roomID missing in url parameters")
+// 		restErr := errors.NewBadRequestError("room id cannot be empty")
+// 		return c.JSON(restErr.Status, restErr)
+// 	}
 
-	ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
-	if err != nil {
-		logger.Error("web socket upgrade error", err)
-		return err
-	}
-	defer ws.Close()
+// 	ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
+// 	if err != nil {
+// 		logger.Error("web socket upgrade error", err)
+// 		return err
+// 	}
+// 	defer ws.Close()
 
-	AllRooms.InsertIntoRoom(roomID, false, ws)
+// 	AllRooms.InsertIntoRoom(roomID, false, ws)
 
-	go broadcaster()
+// 	go broadcaster()
 
-	for {
-		var msg serializers.BroadcastMsg
+// 	for {
+// 		var msg serializers.BroadcastMsg
 
-		err := ws.ReadJSON(&msg.Message)
-		if err != nil {
-			logger.Error("json read error: ", err)
-			restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
-			return c.JSON(restErr.Status, restErr)
-		}
+// 		err := ws.ReadJSON(&msg.Message)
+// 		if err != nil {
+// 			logger.Error("json read error: ", err)
+// 			restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
+// 			return c.JSON(restErr.Status, restErr)
+// 		}
 
-		msg.Client = ws
-		msg.RoomID = roomID
+// 		msg.Client = ws
+// 		msg.RoomID = roomID
 
-		logger.InfoAsJson("web socket received message", msg)
+// 		logger.InfoAsJson("web socket received message", msg)
 
-		broadcast <- msg
-	}
-}
+// 		broadcast <- msg
+// 	}
+// }
 
-var broadcast = make(chan serializers.BroadcastMsg)
+// var broadcast = make(chan serializers.BroadcastMsg)
 
-func broadcaster() {
-	for {
-		msg := <-broadcast
+// func broadcaster() {
+// 	for {
+// 		msg := <-broadcast
 
-		for _, client := range AllRooms.Map[msg.RoomID] {
-			if client.Conn != msg.Client {
-				err := client.Conn.WriteJSON(msg.Message)
+// 		for _, client := range AllRooms.Map[msg.RoomID] {
+// 			if client.Conn != msg.Client {
+// 				err := client.Conn.WriteJSON(msg.Message)
 
-				if err != nil {
-					logger.Error("writing on json", err)
-					client.Conn.Close()
-					return
-				}
-			}
-		}
-	}
-}
+// 				if err != nil {
+// 					logger.Error("writing on json", err)
+// 					client.Conn.Close()
+// 					return
+// 				}
+// 			}
+// 		}
+// 	}
+// }

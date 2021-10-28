@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  config,
-  useClient,
-  useMicrophoneAndCameraTracks,
-} from "./settings.js";
+import { config, useClient, useMicrophoneAndCameraTracks } from "./settings.js";
 import { Grid } from "@material-ui/core";
 import Video from "./Video";
 import Controls from "./Controls";
+import ChannelRtcTokenContainer from "./ChannelRtcTokenContainer.jsx";
 
 export default function VideoCall(props) {
   const { setInCall, channelName, token } = props;
@@ -69,10 +66,14 @@ export default function VideoCall(props) {
 
   return (
     <Grid container direction="column" style={{ height: "100%" }}>
-      <Grid item style={{ height: "5%" }}>
+      <Grid
+        item
+        style={{ height: "5%", display: "flex", marginBottom: "1.25rem" }}
+      >
         {ready && tracks && (
           <Controls tracks={tracks} setStart={setStart} setInCall={setInCall} />
         )}
+        <ChannelRtcTokenContainer roomId={channelName} rtcToken={token} />
       </Grid>
       <Grid item style={{ height: "95%" }}>
         {start && tracks && <Video tracks={tracks} users={users} />}

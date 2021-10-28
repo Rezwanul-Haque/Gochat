@@ -1,7 +1,7 @@
 import React from "react";
+import { Button } from "@material-ui/core";
 
 const CreateRoom = (props) => {
-
   const create = async (e) => {
     e.preventDefault();
 
@@ -25,8 +25,10 @@ const CreateRoom = (props) => {
   };
 
   return (
-    <div>
-      <button onClick={create}>Create Channel</button>
+    <div style={{ height: "100%", padding: "1rem" }}>
+      <Button variant="contained" color="primary" onClick={create}>
+        Create Channel
+      </Button>
     </div>
   );
 };

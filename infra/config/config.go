@@ -103,7 +103,7 @@ func setDefaultConfig() {
 	config.Agora = &AgoraConfig{
 		AppID:            "agora-project-app-id",
 		AppCertificate:   "agora-project-app-certificate",
-		DefaultExpiresIn: 3600, // default expires in 3600 seconds
+		DefaultExpiresIn: 86400, // default expires in 86400 seconds(24 hour)
 		TokenTypes:       []string{"userAccount", "uid"},
 	}
 }

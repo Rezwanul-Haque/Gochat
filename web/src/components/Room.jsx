@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Button, Input } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import VideoCall from "./VideoCall";
+import ChannelRtcTokenContainer from "./ChannelRtcTokenContainer";
 
 const Room = (props) => {
   const [token, setToken] = useState("");
@@ -47,16 +48,17 @@ const Room = (props) => {
   };
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding: "1rem"}}>
       {inCall ? (
         <VideoCall setInCall={setInCall} channelName={props.match.params.roomID} token={token} />
       ) : (
+        <div style={{ display: 'flex', justifyContent: "space-between", marginBottom: "1.25rem"}}>
         <Button variant="contained" color="primary" onClick={joinCall}>
           Join Call
         </Button>
+        <ChannelRtcTokenContainer roomId={props.match.params.roomID} rtcToken={token} />
+        </div>
       )}
-      <Input variant="contained" color="primary" placeholder="channel name" value={props.match.params.roomID} />
-      <Input variant="contained" color="primary" placeholder="rtc token" value={token}/>
     </div>
   );
 };

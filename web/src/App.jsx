@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Route, Switch, useHistory } from "react-router-dom";
+import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -13,6 +13,8 @@ import "./App.css";
 
 function App() {
   const history = useHistory();
+  const loc = useLocation();
+  console.log(loc);
   // Track if authentication is in progress
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   // Track is the user has authenticated
@@ -25,7 +27,6 @@ function App() {
     async function onLoad() {
       try {
         // Check if the user is authenticated
-        // await Auth.currentSession();
         if (checkLogin) {
           setIsAuthenticating(false);
           return userHasAuthenticated(true);
@@ -54,12 +55,14 @@ function App() {
     history.push("/login");
   }
 
+  // const renderRoomOrVideo = hasToken ? Video : Room;
+
   return (
     !isAuthenticating && (
       <div className="App">
         <Navbar bg="light">
           <LinkContainer to="/">
-            <Navbar.Brand>Go Chat</Navbar.Brand>
+            <Navbar.Brand bg="dark">Go Chat</Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">

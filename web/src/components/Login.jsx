@@ -39,13 +39,13 @@ const Login = ({ userHasAuthenticated }) => {
         .then((resp) => {
           // resolving promise
           if (resp.status == 401) {
-            throw "email/password is not correct."
+            throw "email/password is not correct.";
           } else {
             return resp.json();
           }
         })
         .then((data) => {
-          console.log(data)
+          console.log(data);
           window.localStorage.setItem("current_user", JSON.stringify(data));
           userHasAuthenticated(true);
           // Redirect to the homepage

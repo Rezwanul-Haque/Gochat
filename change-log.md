@@ -1,11 +1,12 @@
 ## [Unreleased]
-- web socket connection remove api
+- remove all users from the channel/room when host leave the channel/room.
 - sign up page nav bar bug fix - always shows logut on signup page
+- ability to share link for other user to connect to the channel/room
 
 ***
 ## [1.0.4] - 28-10-2021
 ### Added
-- web app modified to support agora
+- web app modified to support agora sdk
 - agora client added
 - token api added to generate rtc token
 ### Removed

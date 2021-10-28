@@ -32,18 +32,18 @@ export default function Signup({ userHasAuthenticated }) {
       const user = {
         email: fields.email,
         password: fields.password,
-      }
+      };
 
       // Sign the user in
-      await fetch('http://localhost:8080/api/v1/users/signup', {
+      await fetch("http://localhost:8080/api/v1/users/signup", {
         method: "POST",
         body: JSON.stringify(user),
-        headers: {"Content-type": "application/json; charset=UTF-8"}
+        headers: { "Content-type": "application/json; charset=UTF-8" },
       })
-      .then(response => {
-        localStorage.setItem(response);
-      }) 
-      .catch(err => console.log(err));
+        .then((response) => {
+          localStorage.setItem(response);
+        })
+        .catch((err) => console.log(err));
 
       userHasAuthenticated(true);
       // Redirect to the homepage
@@ -95,9 +95,5 @@ export default function Signup({ userHasAuthenticated }) {
     );
   }
 
-  return (
-    <div className="Signup">
-      {renderForm()}
-    </div>
-  );
+  return <div className="Signup">{renderForm()}</div>;
 }

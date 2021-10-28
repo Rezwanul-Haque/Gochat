@@ -9,10 +9,10 @@ Basic one 2 one video chatting app using Golang & Agora & Firebase & React
 ## 🔗 Links
 
 <p float="left">
-    <img src="https://img.shields.io/badge/my_blog-004?style=for-the-badge&logo=blogger&logoColor=white" width="100" height="30px" />
-    <img src="https://img.shields.io/badge/my_portfolio-001?style=for-the-badge&logo=ko-fi&logoColor=white" width="100" height="30px" /> 
-    <img src="https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" width="100" height="30px" />
-    <img src="https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" width="100" height="30px" />
+    <a href="https://rezwanul-haque.hashnode.dev/"><img src="https://img.shields.io/badge/my_blog-004?style=for-the-badge&logo=blogger&logoColor=white" width="100" height="30px" /></a>
+    <a href="https://rezwanul-haque-portfolio.herokuapp.com/en/"><img src="https://img.shields.io/badge/my_portfolio-001?style=for-the-badge&logo=ko-fi&logoColor=white" width="100" height="30px" /> </a>
+    <a href="https://www.linkedin.com/in/rezwanul-haque/"><img src="https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" width="100" height="30px" /></a>
+    <a href="https://twitter.com/Rezwanul__Haque"><img src="https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" width="100" height="30px" /></a>
 </p>
 
 ## Tech Stack

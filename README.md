@@ -6,8 +6,8 @@ Basic one 2 one video chatting app using Golang & Agora & Firebase & React
 
 - [@rezwanul-haque](https://www.github.com/rezwanul-haque)
 
-## Contributors
-- [@tahsin-siad](https://github.com/tahsinsiad)
+## Contributors & Special Thanks
+- [@tahsin-siad](https://github.com/tahsinsiad) for helping me with React part.
 
 ## 🔗 Links
 

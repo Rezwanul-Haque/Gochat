@@ -42,7 +42,7 @@ Group video chatting app using Golang & Agora & websocket + webrtc & Firebase & 
 1. Firebase project
 2. Firebase service account keys file which can be found on firebase project settings `service account` tab
 3. Firebase web API key which can be found on firebase project settings `general` tab
-4. Email/Password based authentication in firebase which can be found on `authentication` tab
+4. Enable `Email/Password` based authentication in firebase which can be found on `authentication` tab
 5. agora project app key and app certificate which can be found on agora `project management` tab
 
 ## Limitation

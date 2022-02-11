@@ -1,20 +1,28 @@
 {
   "app": {
     "name": "gochat",
-    "port": 8080
+    "port": 8080,
+    "logLevel": "info",
+    "authClientType": "firebase",
+    "rtcClientType": "agora",
+    "loggerClientType": "zap"
   },
-  "fireBase": {
-    "credentialFilePath": "fb-svc-key.json",
-    "apiKey": "firebase-web-api-key",
-    "signUpWithEmailAndPasswordUrl": "https://identitytoolkit.googleapis.com/v1/accounts:signUp",
-    "SignInWithEmailAndPasswordUrl": "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
-    "refreshTokenUrl": "https://securetoken.googleapis.com/v1/token",
-    "timeout": 10
+  "auth": {
+    "firebase": {
+      "serviceAccountFilePath": "fb-svc-key.json",
+      "apiKey": "firebase-web-api-key",
+      "signUpWithEmailAndPasswordUrl": "https://identitytoolkit.googleapis.com/v1/accounts:signUp",
+      "SignInWithEmailAndPasswordUrl": "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
+      "refreshTokenUrl": "https://securetoken.googleapis.com/v1/token",
+      "timeout": 10
+    }
   },
-  "agora": {
-    "appID": "agora-project-app-id",
-    "appCertificate": "agora-project-app-certificate",
-    "defaultExpiresIn": 86400,
-    "tokenTypes":       ["userAccount", "uid"]
+  "rtc": {
+    "agora": {
+      "appID": "agora-project-app-id",
+      "appCertificate": "agora-project-app-certificate",
+      "defaultExpiresIn": 86400,
+      "tokenTypes": ["userAccount", "uid"]
+    }
   }
 }

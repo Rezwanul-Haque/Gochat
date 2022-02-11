@@ -2,7 +2,7 @@ package impl
 
 import (
 	"gochat/app/repository"
-	"gochat/infra/clients/firebasec"
+	"gochat/infra/clients/authc"
 	"gochat/infra/errors"
 )
 
@@ -15,7 +15,7 @@ func NewFirebaseUsersRepository() repository.IUsers {
 }
 
 func (r *users) Save(email string, password string) (interface{}, *errors.RestErr) {
-	resp, err := firebasec.Auth().Signup(email, password)
+	resp, err := authc.Auth().Signup(email, password)
 	if err != nil {
 		return nil, err
 	}

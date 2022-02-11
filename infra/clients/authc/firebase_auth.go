@@ -1,75 +1,37 @@
-package firebasec
+package authc
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"gochat/app/serializers"
+	"gochat/app/utils/methodsutil"
 	"gochat/infra/config"
 	"gochat/infra/errors"
 	"gochat/infra/logger"
 	"io/ioutil"
-	"net"
 	"net/http"
 	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
 	"google.golang.org/api/option"
 )
 
-const (
-	CONTENT_TYPE_JSON         = "application/json"
-	CONTENT_TYPE_URL_ENCODING = "application/x-www-form-urlencoded"
-)
-
-type firebaseClient struct {
+type authClient struct {
 	authc *auth.Client
 	httpc *http.Client
 }
 
-type LoginReq struct {
-	Email             string `json:"email"`
-	Password          string `json:"password"`
-	ReturnSecureToken bool   `json:"returnSecureToken"`
-}
-
-type LoginResp struct {
-	IDToken      string `json:"idToken"`
-	Email        string `json:"email"`
-	RefreshToken string `json:"refreshToken"`
-	ExpiresIn    string `json:"expiresIn"`
-	LocalID      string `json:"localId"`
-}
-
-type RefreshTokenReq struct {
-	GranTType    string `json:"grant_type"`
-	RefreshToken string `json:"refresh_token"`
-}
-
-type RefreshTokenResp struct {
-	ExpiresIn    string `json:"expires_in"`
-	TokenType    string `json:"token_type"`
-	RefreshToken string `json:"refresh_token"`
-	IDToken      string `json:"id_token"`
-	UserID       string `json:"user_id"`
-	ProjectID    string `json:"-"`
-}
-
-var (
-	myAuthClient *firebaseClient
-	ctx          context.Context
-)
-
-func Init() {
+func connectFirebase() {
 	var err error
 	ctx = context.Background()
 
-	absPath, err := filepath.Abs(config.Firebase().CredentialFilePath)
+	absPath, err := filepath.Abs(config.Auth().Firebase.ServiceAccountFilePath)
 	if err != nil {
 		panic("unable to load service account keys file")
 	}
@@ -79,7 +41,7 @@ func Init() {
 	opts := option.WithCredentialsFile(absPath)
 	app, err := firebase.NewApp(ctx, nil, opts)
 	if err != nil {
-		logger.Error("error initializing app: ", err)
+		panic(fmt.Sprintf("error initializing app: %v", err))
 	}
 
 	logger.Info("firebase connection established...")
@@ -90,35 +52,14 @@ func Init() {
 		panic(fmt.Sprintf("firebase auth load error: %+v", err))
 	}
 
-	myAuthClient = &firebaseClient{
+	myAuthClient = &authClient{
 		authc: auth,
-		httpc: ConnectFirebase(),
+		httpc: authHttpClient(),
 	}
 }
 
-func ConnectFirebase() *http.Client {
-	timeout := config.Firebase().Timeout * time.Second
-	var netTransport = &http.Transport{
-		DialContext:         (&net.Dialer{Timeout: timeout, KeepAlive: time.Minute}).DialContext,
-		TLSHandshakeTimeout: timeout,
-		MaxIdleConnsPerHost: 10,
-	}
-
-	httpc := &http.Client{
-		Timeout:   timeout,
-		Transport: netTransport,
-	}
-
-	return httpc
-
-}
-
-func Auth() *firebaseClient {
-	return myAuthClient
-}
-
-func (fc firebaseClient) Signup(email string, password string) (*LoginResp, *errors.RestErr) {
-	payload := &LoginReq{
+func (fc authClient) Signup(email string, password string) (*serializers.LoginResp, *errors.RestErr) {
+	payload := &serializers.LoginReq{
 		Email:             email,
 		Password:          password,
 		ReturnSecureToken: true,
@@ -126,7 +67,7 @@ func (fc firebaseClient) Signup(email string, password string) (*LoginResp, *err
 
 	byteData, _ := json.Marshal(payload)
 
-	req := prepareFirebaseURL(config.Firebase().SignUpWithEmailAndPasswordUrl, byteData, "POST", CONTENT_TYPE_JSON)
+	req := prepareFirebaseURL(config.Auth().Firebase.SignUpWithEmailAndPasswordUrl, byteData, "POST", CONTENT_TYPE_JSON)
 
 	res, err := fc.httpc.Do(&req)
 	if err != nil {
@@ -142,17 +83,21 @@ func (fc firebaseClient) Signup(email string, password string) (*LoginResp, *err
 		return nil, restErr
 	}
 
-	var resp LoginResp
+	var resp serializers.LoginResp
 
-	json.Unmarshal(body, &resp)
+	if err := methodsutil.StructToStruct(body, &resp); err != nil {
+		logger.Error("error occurred while unmarshalling", err)
+		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
+		return nil, restErr
+	}
 
 	logger.InfoAsJson("firebase response after signup", resp)
 
 	return &resp, nil
 }
 
-func (fc firebaseClient) Login(email string, password string) (*LoginResp, *errors.RestErr) {
-	payload := &LoginReq{
+func (fc authClient) Login(email string, password string) (*serializers.LoginResp, *errors.RestErr) {
+	payload := &serializers.LoginReq{
 		Email:             email,
 		Password:          password,
 		ReturnSecureToken: true,
@@ -160,7 +105,7 @@ func (fc firebaseClient) Login(email string, password string) (*LoginResp, *erro
 
 	byteData, _ := json.Marshal(payload)
 
-	req := prepareFirebaseURL(config.Firebase().SignInWithEmailAndPasswordUrl, byteData, "POST", CONTENT_TYPE_JSON)
+	req := prepareFirebaseURL(config.Auth().Firebase.SignInWithEmailAndPasswordUrl, byteData, "POST", CONTENT_TYPE_JSON)
 
 	res, err := fc.httpc.Do(&req)
 	if err != nil {
@@ -176,9 +121,13 @@ func (fc firebaseClient) Login(email string, password string) (*LoginResp, *erro
 		return nil, restErr
 	}
 
-	var resp LoginResp
+	var resp serializers.LoginResp
 
-	json.Unmarshal(body, &resp)
+	if err := methodsutil.StructToStruct(body, &resp); err != nil {
+		logger.Error("error occurred while unmarshalling", err)
+		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
+		return nil, restErr
+	}
 
 	if resp.IDToken == "" || resp.Email == "" || resp.RefreshToken == "" {
 		return nil, errors.NewUnauthorizedError("email/password is not correct")
@@ -189,8 +138,8 @@ func (fc firebaseClient) Login(email string, password string) (*LoginResp, *erro
 	return &resp, nil
 }
 
-func (fc firebaseClient) RefreshToken(rtoken string) (*RefreshTokenResp, *errors.RestErr) {
-	payload := &RefreshTokenReq{
+func (fc authClient) RefreshToken(rtoken string) (*serializers.RefreshTokenResp, *errors.RestErr) {
+	payload := &serializers.RefreshTokenReq{
 		GranTType:    "refresh_token",
 		RefreshToken: rtoken,
 	}
@@ -200,11 +149,11 @@ func (fc firebaseClient) RefreshToken(rtoken string) (*RefreshTokenResp, *errors
 	data.Set("refresh_token", payload.RefreshToken)
 	encodedData := data.Encode()
 
-	reqURL, _ := url.Parse(config.Firebase().RefreshTokenUrl)
+	reqURL, _ := url.Parse(config.Auth().Firebase.RefreshTokenUrl)
 
 	// adding query params
 	q := url.Values{}
-	q.Add("key", config.Firebase().ApiKey)
+	q.Add("key", config.Auth().Firebase.ApiKey)
 	reqURL.RawQuery = q.Encode()
 
 	req, err := http.NewRequest("POST", reqURL.String(), strings.NewReader(encodedData))
@@ -231,9 +180,13 @@ func (fc firebaseClient) RefreshToken(rtoken string) (*RefreshTokenResp, *errors
 			return nil, restErr
 		}
 
-		var resp RefreshTokenResp
+		var resp serializers.RefreshTokenResp
 
-		json.Unmarshal(body, &resp)
+		if err := methodsutil.StructToStruct(body, &resp); err != nil {
+			logger.Error("error occurred while unmarshalling", err)
+			restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
+			return nil, restErr
+		}
 
 		logger.InfoAsJson("firebase response after renew refresh token", resp)
 
@@ -250,7 +203,7 @@ func (fc firebaseClient) RefreshToken(rtoken string) (*RefreshTokenResp, *errors
 	return nil, restErr
 }
 
-func (fc firebaseClient) VerifyToken(idToken string) *errors.RestErr {
+func (fc authClient) VerifyToken(idToken string) *errors.RestErr {
 	token, err := fc.authc.VerifyIDToken(ctx, idToken)
 	if err != nil {
 		logger.ErrorAsJson("error verifying ID token", err)
@@ -266,7 +219,7 @@ func prepareFirebaseURL(baseUrl string, body []byte, method, contentType string)
 
 	// adding query params
 	q := url.Values{}
-	q.Add("key", config.Firebase().ApiKey)
+	q.Add("key", config.Auth().Firebase.ApiKey)
 	reqURL.RawQuery = q.Encode()
 
 	req := http.Request{

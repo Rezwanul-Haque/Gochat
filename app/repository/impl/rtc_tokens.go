@@ -2,7 +2,7 @@ package impl
 
 import (
 	"gochat/app/repository"
-	"gochat/infra/clients/agorac"
+	"gochat/infra/clients/rtcc"
 	"gochat/infra/errors"
 )
 
@@ -15,7 +15,7 @@ func NewTokenRepository() repository.ITokens {
 }
 
 func (r *tokens) GenerateRTCToken(chanelName, tokenType, uid, role string, expiresIn uint32) (interface{}, *errors.RestErr) {
-	resp, err := agorac.TokenBuilder().GenerateRTCToken(chanelName, tokenType, uid, role, expiresIn)
+	resp, err := rtcc.TokenBuilder().GenerateRTCToken(chanelName, tokenType, uid, role, expiresIn)
 	if err != nil {
 		return nil, err
 	}

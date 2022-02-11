@@ -2,8 +2,8 @@ package impl
 
 import (
 	"gochat/app/repository"
-	"gochat/app/serializers"
 	"gochat/app/svc"
+	"gochat/app/serializers"
 )
 
 type system struct {

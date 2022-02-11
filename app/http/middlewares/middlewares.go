@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"gochat/infra/clients/firebasec"
+	"gochat/infra/clients/authc"
 	"gochat/infra/errors"
 	"net/http"
 
@@ -33,7 +33,7 @@ func CustomAuth() echo.MiddlewareFunc {
 				return c.JSON(http.StatusUnauthorized, errors.NewUnauthorizedError(err.Error()))
 			}
 
-			if err := firebasec.Auth().VerifyToken(idToken); err != nil {
+			if err := authc.Auth().VerifyToken(idToken); err != nil {
 				return c.JSON(err.Status, err)
 			}
 			return next(c)

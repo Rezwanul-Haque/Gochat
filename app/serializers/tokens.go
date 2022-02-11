@@ -7,3 +7,7 @@ type TokenReq struct {
 	Role        string `json:"role"`
 	ExpireIn    uint32 `json:"expire_in,omitempty"`
 }
+
+type TokenResp struct {
+	RtcToken string `json:"rtc_token"`
+}

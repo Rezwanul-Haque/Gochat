@@ -2,10 +2,10 @@ package controllers
 
 import (
 	m "gochat/app/http/middlewares"
-	"gochat/app/serializers"
 	"gochat/app/svc"
 	"gochat/infra/errors"
 	"gochat/infra/logger"
+	"gochat/app/serializers"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

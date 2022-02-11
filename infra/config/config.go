@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"gochat/infra/logger"
 	"log"
 	"time"
 
@@ -12,17 +11,29 @@ import (
 )
 
 type AppConfig struct {
-	Name string
-	Port string
+	Name             string
+	Port             string
+	LogLevel         string
+	AuthClientType   string
+	RtcClientType    string
+	LoggerClientType string
 }
 
 type FireBaseConfig struct {
-	CredentialFilePath            string
+	ServiceAccountFilePath        string
 	ApiKey                        string
 	SignUpWithEmailAndPasswordUrl string
 	SignInWithEmailAndPasswordUrl string
 	RefreshTokenUrl               string
 	Timeout                       time.Duration
+}
+
+type AuthClient struct {
+	Firebase *FireBaseConfig
+}
+
+type RTCClient struct {
+	Agora *AgoraConfig
 }
 
 type AgoraConfig struct {
@@ -33,9 +44,9 @@ type AgoraConfig struct {
 }
 
 type Config struct {
-	App      *AppConfig
-	FireBase *FireBaseConfig
-	Agora    *AgoraConfig
+	App  *AppConfig
+	Auth AuthClient
+	RTC  RTCClient
 }
 
 var config Config
@@ -44,12 +55,12 @@ func App() *AppConfig {
 	return config.App
 }
 
-func Firebase() *FireBaseConfig {
-	return config.FireBase
+func Auth() AuthClient {
+	return config.Auth
 }
 
-func Agora() *AgoraConfig {
-	return config.Agora
+func RTC() RTCClient {
+	return config.RTC
 }
 
 func LoadConfig() {
@@ -81,18 +92,22 @@ func LoadConfig() {
 			fmt.Println(string(r))
 		}
 	} else {
-		logger.Info("CONSUL_URL or CONSUL_PATH missing! Serving with default config...")
+		log.Println("CONSUL_URL or CONSUL_PATH missing! Serving with default config...")
 	}
 }
 
 func setDefaultConfig() {
 	config.App = &AppConfig{
-		Name: "gochat",
-		Port: "8080",
+		Name:             "gochat",
+		Port:             "8080",
+		LogLevel:         "info",
+		AuthClientType:   "firebase",
+		RtcClientType:    "agora",
+		LoggerClientType: "zap",
 	}
 
-	config.FireBase = &FireBaseConfig{
-		CredentialFilePath:            "fb-svc-key.json",
+	config.Auth.Firebase = &FireBaseConfig{
+		ServiceAccountFilePath:        "fb-svc-key.json",
 		ApiKey:                        "firebase-web-api-key",
 		SignUpWithEmailAndPasswordUrl: "https://identitytoolkit.googleapis.com/v1/accounts:signUp",
 		SignInWithEmailAndPasswordUrl: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
@@ -100,7 +115,7 @@ func setDefaultConfig() {
 		Timeout:                       10,
 	}
 
-	config.Agora = &AgoraConfig{
+	config.RTC.Agora = &AgoraConfig{
 		AppID:            "agora-project-app-id",
 		AppCertificate:   "agora-project-app-certificate",
 		DefaultExpiresIn: 86400, // default expires in 86400 seconds(24 hour)

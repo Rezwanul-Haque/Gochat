@@ -2,9 +2,9 @@ package impl
 
 import (
 	"gochat/app/repository"
-	"gochat/app/serializers"
 	"gochat/app/svc"
 	"gochat/infra/errors"
+	"gochat/app/serializers"
 )
 
 type auth struct {

@@ -13,7 +13,13 @@ help: ## Display this help screen
 ########################
 ### DEVELOP and TEST ###
 ########################
-development:
+install-swagger:
+	which swagger || go install github.com/go-swagger/go-swagger/cmd/swagger
+
+swagger: install-swagger
+	swagger generate spec -o ./swagger.yaml --scan-models
+
+development: swagger
 	# booting up dependency containers
 	@docker-compose up -d consul
 

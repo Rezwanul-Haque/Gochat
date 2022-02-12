@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"gochat/app/serializers"
-	"gochat/app/utils/methodsutil"
 	"gochat/infra/config"
 	"gochat/infra/errors"
 	"gochat/infra/logger"
@@ -58,7 +57,7 @@ func connectFirebase() {
 	}
 }
 
-func (fc authClient) Signup(email string, password string) (*serializers.LoginResp, *errors.RestErr) {
+func (ac authClient) Signup(email string, password string) (*serializers.LoginResp, *errors.RestErr) {
 	payload := &serializers.LoginReq{
 		Email:             email,
 		Password:          password,
@@ -69,7 +68,7 @@ func (fc authClient) Signup(email string, password string) (*serializers.LoginRe
 
 	req := prepareFirebaseURL(config.Auth().Firebase.SignUpWithEmailAndPasswordUrl, byteData, "POST", CONTENT_TYPE_JSON)
 
-	res, err := fc.httpc.Do(&req)
+	res, err := ac.httpc.Do(&req)
 	if err != nil {
 		logger.Error("firebase requesting error", err)
 		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
@@ -85,7 +84,7 @@ func (fc authClient) Signup(email string, password string) (*serializers.LoginRe
 
 	var resp serializers.LoginResp
 
-	if err := methodsutil.StructToStruct(body, &resp); err != nil {
+	if err := json.Unmarshal(body, &resp); err != nil {
 		logger.Error("error occurred while unmarshalling", err)
 		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
 		return nil, restErr
@@ -93,10 +92,14 @@ func (fc authClient) Signup(email string, password string) (*serializers.LoginRe
 
 	logger.InfoAsJson("firebase response after signup", resp)
 
+	if resp.IDToken == "" || resp.Email == "" || resp.RefreshToken == "" {
+		return nil, errors.NewConflictError("user with this email already exists")
+	}
+
 	return &resp, nil
 }
 
-func (fc authClient) Login(email string, password string) (*serializers.LoginResp, *errors.RestErr) {
+func (ac authClient) Login(email string, password string) (*serializers.LoginResp, *errors.RestErr) {
 	payload := &serializers.LoginReq{
 		Email:             email,
 		Password:          password,
@@ -107,7 +110,7 @@ func (fc authClient) Login(email string, password string) (*serializers.LoginRes
 
 	req := prepareFirebaseURL(config.Auth().Firebase.SignInWithEmailAndPasswordUrl, byteData, "POST", CONTENT_TYPE_JSON)
 
-	res, err := fc.httpc.Do(&req)
+	res, err := ac.httpc.Do(&req)
 	if err != nil {
 		logger.Error("firebase requesting error", err)
 		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
@@ -123,7 +126,7 @@ func (fc authClient) Login(email string, password string) (*serializers.LoginRes
 
 	var resp serializers.LoginResp
 
-	if err := methodsutil.StructToStruct(body, &resp); err != nil {
+	if err := json.Unmarshal(body, &resp); err != nil {
 		logger.Error("error occurred while unmarshalling", err)
 		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
 		return nil, restErr
@@ -138,7 +141,7 @@ func (fc authClient) Login(email string, password string) (*serializers.LoginRes
 	return &resp, nil
 }
 
-func (fc authClient) RefreshToken(rtoken string) (*serializers.RefreshTokenResp, *errors.RestErr) {
+func (ac authClient) RefreshToken(rtoken string) (*serializers.RefreshTokenResp, *errors.RestErr) {
 	payload := &serializers.RefreshTokenReq{
 		GranTType:    "refresh_token",
 		RefreshToken: rtoken,
@@ -165,7 +168,7 @@ func (fc authClient) RefreshToken(rtoken string) (*serializers.RefreshTokenResp,
 	req.Header.Add("Content-Type", CONTENT_TYPE_URL_ENCODING)
 	req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
-	res, err := fc.httpc.Do(req)
+	res, err := ac.httpc.Do(req)
 	if err != nil {
 		logger.Error("firebase requesting error", err)
 		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
@@ -182,7 +185,7 @@ func (fc authClient) RefreshToken(rtoken string) (*serializers.RefreshTokenResp,
 
 		var resp serializers.RefreshTokenResp
 
-		if err := methodsutil.StructToStruct(body, &resp); err != nil {
+		if err := json.Unmarshal(body, &resp); err != nil {
 			logger.Error("error occurred while unmarshalling", err)
 			restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
 			return nil, restErr

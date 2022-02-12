@@ -2,10 +2,10 @@ package controllers
 
 import (
 	m "gochat/app/http/middlewares"
+	"gochat/app/serializers"
 	"gochat/app/svc"
 	"gochat/infra/errors"
 	"gochat/infra/logger"
-	"gochat/app/serializers"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -25,6 +25,13 @@ func NewTokenController(grp interface{}, tSvc svc.ITokens) {
 
 	g.POST("/v1/rtc/token", rc.CreateToken, m.CustomAuth())
 }
+
+// swagger:route POST /v1/rtc/token RTCToken CreateToken createTokenRequest
+// Return a new token for the current user to join the room using agora etc
+// 		responses:
+//			200: rtcTokenResponse
+//			400: errorResponse
+//			500: errorResponse
 
 // CreateToken Create a RTC token for agora client app
 func (ctr *tokens) CreateToken(c echo.Context) error {

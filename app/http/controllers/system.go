@@ -26,17 +26,29 @@ func NewSystemController(grp interface{}, sysSvc svc.ISystem) {
 	g.GET("/v1/h34l7h", pc.Health)
 }
 
+// swagger:route GET /v1 Root will let you see what you can slash 🐲
+// Return a message
+// responses:
+//	200: genericSuccessResponse
+
 // Root will let you see what you can slash 🐲
 func (sh *system) Root(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{"message": "gochat backend! let's play!!"})
 }
+
+// swagger:route GET /v1/h34l7h Health will let you know the heart beats ❤️
+// Return a message
+// responses:
+//	200: appStatusResponse
+//  500: errorResponse
 
 // Health will let you know the heart beats ❤️
 func (sys *system) Health(c echo.Context) error {
 	resp, err := sys.svc.GetHealth()
 	if err != nil {
 		logger.Error(fmt.Sprintf("%+v", resp), err)
-		return c.JSON(http.StatusInternalServerError, errors.ErrSomethingWentWrong)
+		restErr := errors.NewInternalServerError(errors.ErrSomethingWentWrong)
+		return c.JSON(restErr.Status, restErr)
 	}
 	return c.JSON(http.StatusOK, resp)
 }

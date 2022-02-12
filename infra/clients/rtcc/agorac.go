@@ -55,7 +55,7 @@ func (ac *rtcClient) GenerateRTCToken(channelName, tokenType, uid, role string, 
 			return nil, restErr
 		}
 
-		uid := uint32(uid64) // convert uid from uint64 to uint 32
+		uid := uint32(uid64) // convert uid from uint64 to uint32
 		logger.Info(fmt.Sprintf("building token with uid: %v", uid))
 		resp.RtcToken, err = rtctokenbuilder.BuildTokenWithUID(config.RTC().Agora.AppID,
 			config.RTC().Agora.AppCertificate,

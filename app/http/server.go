@@ -21,6 +21,13 @@ func Start() {
 		os.Exit(1)
 	}
 
+	// routes for documentation
+	dg := e.Group("docs")
+	dg.GET("/swagger", echo.WrapHandler(middlewares.SwaggerDocs()))
+	dg.GET("/redoc", echo.WrapHandler(middlewares.ReDocDocs()))
+	dg.GET("/rapidoc", echo.WrapHandler(middlewares.RapiDocs()))
+	e.Static("/swagger.yaml", "./swagger.yaml")
+
 	container.Init(e.Group("api"))
 
 	port := config.App().Port

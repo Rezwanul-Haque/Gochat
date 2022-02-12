@@ -4,6 +4,14 @@
 - ability to share link for other user to connect to the channel/room
 
 ***
+## [1.1.0] - 12-02-2022
+### Added
+- swagger documentation
+### Changed
+- project struct refactored to handle multiple types of auth and rtc clients
+
+
+***
 ## [1.0.4] - 28-10-2021
 ### Added
 - web app modified to support agora sdk

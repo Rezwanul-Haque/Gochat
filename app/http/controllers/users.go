@@ -24,6 +24,15 @@ func NewUsersController(grp interface{}, uSvc svc.IUsers) {
 	g.POST("/v1/users/signup", uc.Create)
 }
 
+// swagger:route POST /v1/users/signup Users userCreateRequest
+// Return a new users access token and refresh token from Cloud authentication mechanism like firebase auth, aws cognito etc
+// responses:
+//	201: firebaseLoginResponse
+//	400: errorResponse
+//	409: errorResponse
+//	500: errorResponse
+
+// Create handles POST requests and create a new user in cloud authentication
 func (ctr *users) Create(c echo.Context) error {
 	var user serializers.UserReq
 

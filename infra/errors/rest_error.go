@@ -7,7 +7,6 @@ import (
 
 var (
 	ErrSomethingWentWrong  = "something went wrong"
-	ErrInvalidEmail        = NewError("invalid email")
 	ErrInvalidRequestBody  = "invalid request body"
 	ErrInvalidRefreshToken = "refresh token expried"
 	ErrInvalidIdToken      = NewError("invalid id token")
@@ -52,5 +51,13 @@ func NewUnauthorizedError(message string) *RestErr {
 		Message: message,
 		Status:  http.StatusUnauthorized,
 		Error:   "unauthorized",
+	}
+}
+
+func NewConflictError(message string) *RestErr {
+	return &RestErr{
+		Message: message,
+		Status:  http.StatusConflict,
+		Error:   "conflict",
 	}
 }

@@ -37,7 +37,12 @@ func NewRoomsController(grp interface{}) {
 	// g.GET("/v1/join", rc.JoinRoom) // testing purposes only
 }
 
-// CreateRoom Create a Room and return roomID
+// swagger:route GET /v1/room Rooms GetARoom
+// Return a new room id
+// 	responses:
+//		200: roomResponse
+
+// CreateRoom Generate a new room for group chat
 func (ctr *rooms) CreateRoom(c echo.Context) error {
 	roomID := AllRooms.CreateRoom()
 

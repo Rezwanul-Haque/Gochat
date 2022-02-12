@@ -5,6 +5,7 @@ import (
 	"gochat/infra/errors"
 	"net/http"
 
+	openMiddleware "github.com/go-openapi/runtime/middleware"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -23,6 +24,34 @@ func Attach(e *echo.Echo) error {
 	e.Use(middleware.Secure())
 
 	return nil
+}
+
+func SwaggerDocs() http.Handler {
+	opts := openMiddleware.SwaggerUIOpts{
+		Path:    "docs/swagger",
+		SpecURL: "/swagger.yaml",
+	}
+	return openMiddleware.SwaggerUI(opts, nil)
+}
+
+func ReDocDocs() http.Handler {
+	opts := openMiddleware.RedocOpts{
+		Path:    "docs/redoc",
+		SpecURL: "/swagger.yaml",
+	}
+	return openMiddleware.Redoc(opts, nil)
+}
+
+func RapiDocs() http.Handler {
+	opts := openMiddleware.RapiDocOpts{
+		Path:    "docs/rapidoc",
+		SpecURL: "/swagger.yaml",
+	}
+	return openMiddleware.RapiDoc(opts, nil)
+}
+
+func Gzip() echo.MiddlewareFunc {
+	return middleware.Gzip()
 }
 
 func CustomAuth() echo.MiddlewareFunc {

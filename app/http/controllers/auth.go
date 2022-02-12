@@ -28,6 +28,15 @@ func NewAuthController(grp interface{}, authSvc svc.IAuth, userSvc svc.IUsers) {
 	g.POST("/v1/token/refresh", ac.RefreshToken)
 }
 
+// swagger:route POST /v1/login Auth loginRequest
+// Return authenticated user tokens from Cloud authentication mechanism like firebase auth, aws cognito etc
+// responses:
+//	200: firebaseLoginResponse
+//	400: errorResponse
+//	401: errorResponse
+//	500: errorResponse
+
+// Login handles POST requests and login response from firebase
 func (ctr *auth) Login(c echo.Context) error {
 	var cred serializers.LoginReq
 
@@ -45,6 +54,15 @@ func (ctr *auth) Login(c echo.Context) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
+// swagger:route POST /v1/token/refresh Auth refreshTokenRequest
+// Return renewed authenticated user token from Cloud authentication mechanism like firebase auth, aws cognito etc
+// responses:
+//	200: firebaseRenewRefreshResponse
+//	400: errorResponse
+//	401: errorResponse
+//	500: errorResponse
+
+// RefreshToken handles POST requests and renew id token from cloud authentication
 func (ctr *auth) RefreshToken(c echo.Context) error {
 	var rt serializers.RefreshTokenReq
 

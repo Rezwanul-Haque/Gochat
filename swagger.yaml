@@ -1,0 +1,241 @@
+basePath: /api
+consumes:
+- application/json
+definitions:
+  HealthResp:
+    properties:
+      app_online:
+        type: boolean
+        x-go-name: AppOnline
+    type: object
+    x-go-package: gochat/app/serializers
+  RefreshTokenReq:
+    properties:
+      refresh_token:
+        type: string
+        x-go-name: RefreshToken
+    type: object
+    x-go-package: gochat/docs/open_api
+  RestErr:
+    properties:
+      error:
+        type: string
+        x-go-name: Error
+      message:
+        type: string
+        x-go-name: Message
+      status:
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: gochat/infra/errors
+  RoomResp:
+    properties:
+      room_id:
+        type: string
+        x-go-name: RoomID
+    type: object
+    x-go-package: gochat/app/serializers
+  TokenReq:
+    properties:
+      channel_name:
+        type: string
+        x-go-name: ChannelName
+      expire_in:
+        format: uint32
+        type: integer
+        x-go-name: ExpireIn
+      role:
+        type: string
+        x-go-name: Role
+      token_type:
+        type: string
+        x-go-name: TokenType
+      uid:
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: gochat/app/serializers
+  TokenResp:
+    properties:
+      rtc_token:
+        type: string
+        x-go-name: RtcToken
+    type: object
+    x-go-package: gochat/app/serializers
+  UserReq:
+    properties:
+      email:
+        type: string
+        x-go-name: Email
+      password:
+        type: string
+        x-go-name: Password
+    type: object
+    x-go-package: gochat/app/serializers
+host: localhost:8080
+info:
+  contact:
+    email: rezwanul.haque@vivasoftltd.com
+    name: Rezwanul-Haque
+    url: https://www.linkedin.com/in/rezwanul-haque/
+  description: |-
+    the purpose of this service is to provide Authentication related APIs and Create agora tokens
+    for authenticated users to join a room related APIs
+  license:
+    name: Mozilla Public License
+  title: GoChat API.
+  version: 1.1.0
+paths:
+  /v1/login:
+    post:
+      description: Return authenticated user tokens from Cloud authentication mechanism
+        like firebase auth, aws cognito etc
+      operationId: loginRequest
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/UserReq'
+      responses:
+        "200":
+          $ref: '#/responses/firebaseLoginResponse'
+        "400":
+          $ref: '#/responses/errorResponse'
+        "401":
+          $ref: '#/responses/errorResponse'
+        "500":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - Auth
+  /v1/room:
+    get:
+      description: Return a new room id
+      operationId: GetARoom
+      responses:
+        "200":
+          $ref: '#/responses/roomResponse'
+      tags:
+      - Rooms
+  /v1/rtc/token:
+    post:
+      description: Return a new token for the current user to join the room using
+        agora etc
+      operationId: createTokenRequest
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/TokenReq'
+      responses:
+        "200":
+          $ref: '#/responses/rtcTokenResponse'
+        "400":
+          $ref: '#/responses/errorResponse'
+        "500":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - RTCToken
+      - CreateToken
+  /v1/token/refresh:
+    post:
+      description: Return renewed authenticated user token from Cloud authentication
+        mechanism like firebase auth, aws cognito etc
+      operationId: refreshTokenRequest
+      parameters:
+      - in: body
+        name: refresh_token
+        schema:
+          $ref: '#/definitions/RefreshTokenReq'
+        x-go-name: RefreshToken
+      responses:
+        "200":
+          $ref: '#/responses/firebaseRenewRefreshResponse'
+        "400":
+          $ref: '#/responses/errorResponse'
+        "401":
+          $ref: '#/responses/errorResponse'
+        "500":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - Auth
+  /v1/users/signup:
+    post:
+      description: Return a new users access token and refresh token from Cloud authentication
+        mechanism like firebase auth, aws cognito etc
+      operationId: userCreateRequest
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/UserReq'
+      responses:
+        "201":
+          $ref: '#/responses/firebaseLoginResponse'
+        "400":
+          $ref: '#/responses/errorResponse'
+        "409":
+          $ref: '#/responses/errorResponse'
+        "500":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - Users
+produces:
+- application/json
+responses:
+  appStatusResponse:
+    description: returns a boolean flag to indicate if the app is online or not
+    schema:
+      $ref: '#/definitions/HealthResp'
+  errorResponse:
+    description: Generic error message
+    schema:
+      $ref: '#/definitions/RestErr'
+  firebaseLoginResponse:
+    description: Firebase login response
+    headers:
+      email:
+        type: string
+      expiresIn:
+        type: string
+      idToken:
+        type: string
+      localId:
+        type: string
+      refreshToken:
+        type: string
+  firebaseRenewRefreshResponse:
+    description: Firebase renew refresh token response
+    headers:
+      expires_in:
+        type: string
+      id_token:
+        type: string
+      refresh_token:
+        type: string
+      token_type:
+        type: string
+      user_id:
+        type: string
+  genericSuccessResponse:
+    description: returns a message
+    headers:
+      message:
+        type: string
+  roomResponse:
+    description: returns a 8 digit unique room id in the response
+    schema:
+      $ref: '#/definitions/RoomResp'
+  rtcTokenResponse:
+    description: RTC Token response
+    schema:
+      $ref: '#/definitions/TokenResp'
+schemes:
+- http
+securityDefinitions:
+  bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

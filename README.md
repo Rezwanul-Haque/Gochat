@@ -43,13 +43,20 @@ Group video chatting app using Golang & Agora & websocket + webrtc & Firebase & 
 2. Firebase service account keys file which can be found on firebase project settings `service account` tab
 3. Firebase web API key which can be found on firebase project settings `general` tab
 4. Enable `Email/Password` based authentication in firebase which can be found on `authentication` tab
-5. agora project app key and app certificate which can be found on agora `project management` tab
+5. Agora project app key and app certificate which can be found on agora `project management` tab
 
 ## Limitation
 
 - Unable to share the link for another user to join the channel/room.
 - If another user is not authenticated, redirect him to the login page that is missing.
 - Web app routes need to be authenticated
+
+## Interactive API documentation (provided by Swagger UI, Redoc, Rapidoc)
+```
+- http://localhost:8080/docs/swagger
+- http://localhost:8080/docs/redoc
+- http://localhost:8080/docs/rapidoc
+```
 
 ## Current Working Procedure(Steps)
 

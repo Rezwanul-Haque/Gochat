@@ -9,5 +9,5 @@ fi
 
 go build
 echo "Docker build with tag: $1"
-docker build -t <docker-registry-path>/go-chat:"$1" .
-docker push <docker-registry-path>/go-chat:"$1"
+docker build -t <docker-registry-url>/gochat:"$1" .
+docker push <docker-registry-url>/gochat:"$1"

@@ -4,6 +4,14 @@
 - ability to share link for other user to connect to the channel/room
 
 ***
+## [1.2.0] - 21-02-2022
+### Added
+- metrics api added
+- prometheus & grafana services added to docker compose
+### Changed
+- bugfix: open api documentation file not found when running using docker
+
+***
 ## [1.1.0] - 12-02-2022
 ### Added
 - swagger documentation

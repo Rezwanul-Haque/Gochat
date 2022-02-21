@@ -21,7 +21,7 @@ swagger: install-swagger
 
 development: swagger
 	# booting up dependency containers
-	@docker-compose up -d consul
+	@docker-compose up -d consul prometheus grafana
 
 	# wait for consul container be ready
 	@while ! curl --request GET -sL --url 'http://localhost:8500/' > /dev/null 2>&1; do printf .; sleep 1; done

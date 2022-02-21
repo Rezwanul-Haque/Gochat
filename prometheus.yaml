@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 15s # Make scrape interval to 1s for testing.
+
+# rules_config: 
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  - job_name: 'prom-demo'
+    scrape_interval: 1s
+    static_configs:
+      - targets: ['gochat:9080']

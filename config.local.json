@@ -2,6 +2,7 @@
   "app": {
     "name": "gochat",
     "port": 8080,
+    "metricsPort": 9080,
     "logLevel": "info",
     "authClientType": "firebase",
     "rtcClientType": "agora",

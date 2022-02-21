@@ -16,6 +16,7 @@ services:
       context: .
     ports:
       - 8080:8080
+      - 9080:9080
     command: serve
     volumes:
       - ./:/project
@@ -28,6 +29,26 @@ services:
     networks:
       - gochat_networks
     restart: on-failure:3
+
+  prometheus:
+    image: prom/prometheus:v2.33.3
+    container_name: gochat_prom
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - gochat
+    networks:
+      - gochat_networks
+
+  grafna:
+    image: grafana/grafana:8.5.0-51876pre-ubuntu
+    container_name: gochat_grafna
+    ports:
+      - 3000:3000
+    networks:
+      - gochat_networks
 
 networks:
   gochat_networks:

@@ -13,6 +13,7 @@ import (
 type AppConfig struct {
 	Name             string
 	Port             string
+	MetricsPort      string
 	LogLevel         string
 	AuthClientType   string
 	RtcClientType    string
@@ -100,6 +101,7 @@ func setDefaultConfig() {
 	config.App = &AppConfig{
 		Name:             "gochat",
 		Port:             "8080",
+		MetricsPort:      "9080",
 		LogLevel:         "info",
 		AuthClientType:   "firebase",
 		RtcClientType:    "agora",

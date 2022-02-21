@@ -34,6 +34,8 @@ COPY --from=builder /user/group /user/passwd /etc/
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 # Import the firebase service account keys file
 COPY --chown=nobody:nobody --from=builder /src/fb-svc-key.json fb-svc-key.json
+# Import the open api documentation file from builder stage
+COPY --chown=nobody:nobody --from=builder /src/swagger.yaml swagger.yaml
 # Import the compiled executable from the first stage.
 COPY --chown=nobody:nobody --from=builder /app /app
 

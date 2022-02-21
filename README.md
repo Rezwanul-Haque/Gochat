@@ -1,6 +1,6 @@
 # Go Chat
 
-Group video chatting app using Golang & Agora & websocket + webrtc & Firebase & React
+Group video chatting app using Golang & Agora as webrtc client & Firebase & React
 
 ## Authors
 

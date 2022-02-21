@@ -108,7 +108,7 @@ func setDefaultConfig() {
 
 	config.Auth.Firebase = &FireBaseConfig{
 		ServiceAccountFilePath:        "fb-svc-key.json",
-		ApiKey:                        "AIzaSyBWzra2RfPaym9Jvm69CtjRl5y-5LjsI90",
+		ApiKey:                        "<firevase-api-key>",
 		SignUpWithEmailAndPasswordUrl: "https://identitytoolkit.googleapis.com/v1/accounts:signUp",
 		SignInWithEmailAndPasswordUrl: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
 		RefreshTokenUrl:               "https://securetoken.googleapis.com/v1/token",

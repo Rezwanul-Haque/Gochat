@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.9'
 
 services:
   consul:
@@ -29,24 +29,30 @@ services:
     networks:
       - gochat_networks
     restart: on-failure:3
-
   prometheus:
-    image: prom/prometheus:v2.33.3
+    image: prom/prometheus:latest
     container_name: gochat_prom
     ports:
       - 9090:9090
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
     depends_on:
       - gochat
     networks:
       - gochat_networks
 
   grafana:
-    image: grafana/grafana:8.5.0-51876pre-ubuntu
+    image: grafana/grafana:latest
     container_name: gochat_grafana
     ports:
       - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
     networks:
       - gochat_networks
 
@@ -54,3 +60,10 @@ networks:
   gochat_networks:
     name: gochat_networks
     driver: bridge
+
+volumes:
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+    

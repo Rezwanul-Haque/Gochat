@@ -30,20 +30,20 @@ func Start() {
 	e.Static("/swagger.yaml", "./swagger.yaml")
 
 	// Create Prometheus server and Middleware
-	echoPrometheus := echo.New()
-	echoPrometheus.HideBanner = true
+	echoProm := echo.New()
+	echoProm.HideBanner = true
 	prom := prometheus.NewPrometheus("echo", nil)
 
 	// Scrape metrics from Main Server
 	e.Use(prom.HandlerFunc)
 	// Setup metrics endpoint at another server
-	prom.SetMetricsPath(echoPrometheus)
+	prom.SetMetricsPath(echoProm)
 
 	go func() {
-		echoPrometheus.Logger.Fatal(echoPrometheus.Start(":" + config.App().MetricsPort))
+		echoProm.Logger.Fatal(echoProm.Start(":" + config.App().MetricsPort))
 
-		// graceful shutdown prometheus server
-		GracefulShutdown(echoPrometheus)
+		// gracefully shutdown metrics server
+		GracefulShutdown(echoProm)
 	}()
 
 	container.Init(e.Group("api"))
@@ -53,7 +53,7 @@ func Start() {
 		e.Logger.Fatal(e.Start(":" + config.App().Port))
 	}()
 
-	// graceful shutdown
+	// gracefully shutdown application server
 	GracefulShutdown(e)
 }
 
